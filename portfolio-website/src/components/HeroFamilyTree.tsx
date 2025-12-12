@@ -70,7 +70,7 @@ const HeroFamilyTree = () => {
 
     return (
         <div
-            className="relative w-full h-full bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800"
+            className="relative w-full h-[500px] bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-800"
             onMouseMove={handleMouseMove}
         >
             {/* 3D Scene Layer */}
