@@ -1,7 +1,15 @@
 
-import { useState } from 'react';
-import ThreeDFamilyTree from './ThreeDFamilyTree';
+import { useState, Suspense } from 'react';
+import ThreeDFamilyTree from './ThreeDFamilyTree.jsx';
+import SimpleErrorBoundary from './SimpleErrorBoundary';
 import { type Person, corleoneFamily, findRelationship } from '../utils/familyTreeLogic';
+
+const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center h-full text-cyan-500">
+        <div className="w-8 h-8 set-spin rounded-full border-4 border-cyan-500/30 border-t-cyan-500 mb-2 animate-spin"></div>
+        <p className="text-xs tracking-widest uppercase opacity-70">Loading Hologram...</p>
+    </div>
+);
 
 const HeroFamilyTree = () => {
     // Selection State
@@ -19,14 +27,10 @@ const HeroFamilyTree = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     // --- Cursor Tracking for Tooltip ---
-    // (If we wanted the tooltip to follow the mouse. For now, we can perhaps just lock it to a corner or simple absolute pos)
-    // Actually, following the mouse is nicer for "hover over fruit".
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        // Only update if hovered to save renders? Or always.
         if (hoveredNode) {
-            // Offset slightly so it doesn't block click
             setCursorPos({ x: e.nativeEvent.offsetX + 20, y: e.nativeEvent.offsetY + 20 });
         }
     };
@@ -34,26 +38,20 @@ const HeroFamilyTree = () => {
     // --- Interaction Logic ---
     const handleNodeClick = (node: Person) => {
         if (!selectedFirst) {
-            // First selection
             setSelectedFirst(node);
             setStatusMessage(`Selected: ${node.name}. Now select another.`);
             setRelationshipText('');
         } else if (!selectedSecond) {
-            // Second selection (if different)
             if (node.id === selectedFirst.id) {
-                // Deselect if same
                 setSelectedFirst(null);
                 setStatusMessage('Select a family member to start.');
                 return;
             }
             setSelectedSecond(node);
-
-            // Calculate Relationship
             const result = findRelationship(selectedFirst.id, node.id, corleoneFamily);
             setRelationshipText(result);
             setStatusMessage('Relationship found!');
         } else {
-            // Third click: Reset and start new
             setSelectedFirst(node);
             setSelectedSecond(null);
             setRelationshipText('');
@@ -73,12 +71,16 @@ const HeroFamilyTree = () => {
             className="relative w-full h-[500px] bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-800"
             onMouseMove={handleMouseMove}
         >
-            {/* 3D Scene Layer */}
+            {/* 3D Scene Layer with Safety Guards */}
             <div className="absolute inset-0 z-0">
-                <ThreeDFamilyTree
-                    onNodeClick={handleNodeClick}
-                    onNodeHover={setHoveredNode}
-                />
+                <SimpleErrorBoundary>
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ThreeDFamilyTree
+                            onNodeClick={handleNodeClick}
+                            onNodeHover={setHoveredNode}
+                        />
+                    </Suspense>
+                </SimpleErrorBoundary>
             </div>
 
             {/* UI Overlay: Top Left Panel */}
