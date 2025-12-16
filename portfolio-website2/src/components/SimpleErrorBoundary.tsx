@@ -1,4 +1,4 @@
-import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
     children?: ReactNode;
@@ -29,6 +29,9 @@ class SimpleErrorBoundary extends Component<Props, State> {
                 <div className="flex flex-col items-center justify-center h-full w-full bg-black/90 text-red-500 p-6 text-center border border-red-900/50 rounded-xl">
                     <h3 className="font-bold text-lg mb-2">Visualization Unavailable</h3>
                     <p className="text-xs font-mono text-gray-400 mb-4">{this.state.error?.message}</p>
+                    <p className="text-[10px] text-gray-500 mb-4">
+                        (Try closing your browser window completely and reopening it to free up WebGL resources)
+                    </p>
                     <button
                         onClick={() => this.setState({ hasError: false })}
                         className="px-3 py-1 bg-gray-800 text-xs text-white rounded hover:bg-gray-700 transition"

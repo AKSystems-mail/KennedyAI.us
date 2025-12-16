@@ -1,66 +1,100 @@
-
 import React from 'react';
-import { SiFirebase, SiKotlin, SiSwift, SiPython, SiReact, SiGoogle } from 'react-icons/si';
+import { SiKotlin, SiSwift, SiReact, SiFirebase, SiNodedotjs, SiGoogleplay } from 'react-icons/si';
+import { motion } from 'framer-motion';
 
 const techData = [
   {
-    Icon: SiReact,
-    label: 'Frontend Framework',
-    hoverColor: 'hover:text-blue-500',
-    name: 'React',
-  },
-  {
-    Icon: SiFirebase,
-    label: 'Backend & DB',
-    hoverColor: 'hover:text-yellow-500',
-    name: 'Firebase',
-  },
-  {
     Icon: SiKotlin,
-    label: 'Android Development',
-    hoverColor: 'hover:text-purple-600',
     name: 'Kotlin',
+    label: 'Primary language for Android Apps',
+    color: '#7F52FF', // Purple
   },
   {
     Icon: SiSwift,
-    label: 'iOS Development',
-    hoverColor: 'hover:text-orange-500',
     name: 'Swift',
+    label: 'Native iOS Development',
+    color: '#F05138', // Orange-Red
   },
   {
-    Icon: SiPython,
-    label: 'Scripting & AI',
-    hoverColor: 'hover:text-blue-400',
-    name: 'Python',
+    Icon: SiReact,
+    name: 'React',
+    label: 'Web & Cross-platform UI',
+    color: '#61DAFB', // Cyan
   },
   {
-    Icon: SiGoogle,
-    label: 'AI Integration',
-    hoverColor: 'hover:text-blue-500',
-    name: 'Gemini',
+    Icon: SiFirebase,
+    name: 'Firebase',
+    label: 'Backend-as-a-Service & Analytics',
+    color: '#FFCA28', // Amber/Yellow
+  },
+  {
+    Icon: SiNodedotjs,
+    name: 'Node.js',
+    label: 'Server-side Logic & APIs',
+    color: '#339933', // Green
+  },
+  {
+    Icon: SiGoogleplay,
+    name: 'Google Play',
+    label: 'App Deployment & Management',
+    color: '#00C06D', // Play Greenish
   },
 ];
 
+// Duplicate data to create seamless loop
+const marqueeData = [...techData, ...techData];
+
 const TechStack = () => {
   return (
-    <div className="bg-neutral-800 rounded-3xl p-6 w-full h-full flex flex-col justify-center">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center text-yellow-400">
-          {/* Placeholder Icon for Tech Stack */}
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16" /></svg>
-        </div>
-        <h3 className="text-2xl font-bold text-gray-100">Interactive Tech Stack</h3>
-      </div>
-      <div className="flex justify-around items-center h-full">
-        {techData.map(({ Icon, label, hoverColor, name }) => (
-          <div key={name} className="group relative flex flex-col items-center">
-            <Icon className={`w-12 h-12 text-gray-400 transition-colors duration-300 ${hoverColor}`} />
-            <div className="absolute bottom-full mb-2 w-max px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {label}
-            </div>
-          </div>
+    <div
+      className="col-span-1 md:col-span-3 bg-slate-900 rounded-3xl p-8 flex items-center overflow-hidden relative group"
+      style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
+    >
+
+      {/* Marquee Track */}
+      <motion.div
+        className="flex gap-16 items-center px-8"
+        animate={{ x: "-50%" }}
+        transition={{
+          duration: 30,
+          ease: "linear",
+          repeat: Infinity,
+          repeatType: "loop"
+        }}
+        // Pause on hover for easier interaction
+        whileHover={{ animationPlayState: "paused" }}
+      >
+        {marqueeData.map((tech, index) => (
+          <TechItem key={`${tech.name}-${index}`} {...tech} />
         ))}
-      </div>
+      </motion.div>
+    </div>
+  );
+};
+
+const TechItem = ({ Icon, name, label, color }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center gap-2 cursor-help relative min-w-[80px]"
+      title={`${name}: ${label}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Icon
+        className="w-14 h-14 transition-all duration-300"
+        style={{
+          color: isHovered ? color : '#525252', // neutral-600 for grayscale
+          filter: isHovered ? 'drop-shadow(0 0 8px rgba(255,255,255,0.1))' : 'none',
+          transform: isHovered ? 'scale(1.1)' : 'scale(1)'
+        }}
+      />
+      <span
+        className={`text-sm font-medium transition-colors duration-300 ${isHovered ? 'text-white' : 'text-neutral-500'}`}
+      >
+        {name}
+      </span>
     </div>
   );
 };

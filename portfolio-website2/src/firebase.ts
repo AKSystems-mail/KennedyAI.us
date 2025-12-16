@@ -1,19 +1,22 @@
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDSwi2KxrUuOXwJ1BUYhl49Z36RM6C4RGU",
+    authDomain: "kennedyai.firebaseapp.com",
+    projectId: "kennedyai",
+    storageBucket: "kennedyai.firebasestorage.app",
+    messagingSenderId: "322135870218",
+    appId: "1:322135870218:web:d0948838673589de1fc8f3",
+    measurementId: "G-8WBTHJ518V"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const analytics = getAnalytics(app);
+export const db = getFirestore(app);
 
 export const submitWaitlist = async (email: string, projectId: string) => {
     try {

@@ -127,8 +127,8 @@ const ThreeDFamilyTree = ({ onNodeClick, onNodeHover }) => {
     <div style={{ width: '100%', height: '100%', background: '#050505' }}>
       <Canvas
         camera={{ position: [0, 2, 8], fov: 50 }}
-        dpr={[1, 1.5]} // Cap pixel ratio for performance
-        gl={{ powerPreference: "high-performance", failIfMajorPerformanceCaveat: false }}
+        dpr={1}
+        gl={{ antialias: false, powerPreference: "default" }}
       >
         {/* Lights */}
         <ambientLight intensity={0.5} />
@@ -141,15 +141,15 @@ const ThreeDFamilyTree = ({ onNodeClick, onNodeHover }) => {
         {/* If tree is huge, scale down. If small, scale up. 0.01 is common for massive exports. */}
         {/* I'll use scale=1 initially, user said "Center at [0, -2, 0]". I'll guess scale. */}
 
-        {/* 🌟 EFFECT: Floating Particles (Like the reference image dust) */}
-        <Sparkles
+        {/* 🌟 EFFECT: Floating Particles (Disabled for Performance) */}
+        {/* <Sparkles
           count={200}
           scale={[10, 10, 10]}
           size={4}
           speed={0.4}
           opacity={0.6}
           color="#00ffff"
-        />
+        /> */}
 
         {/* 🌟 EFFECT: Glowing Ground Ring */}
         <group position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -181,10 +181,12 @@ const ThreeDFamilyTree = ({ onNodeClick, onNodeHover }) => {
 
         {/* Controls & Shine */}
         <OrbitControls minDistance={4} maxDistance={20} enablePan={false} maxPolarAngle={Math.PI / 1.8} />
-        <EffectComposer disableNormalPass>
-          <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.6} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer>
+
+        {/* LITE MODE: Post-processing removed for 2015 MBP compatibility */}
+        {/* <EffectComposer disableNormalPass>
+            <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.6} />
+            <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        </EffectComposer> */}
       </Canvas>
     </div>
   );

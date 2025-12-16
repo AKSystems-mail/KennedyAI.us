@@ -1,62 +1,99 @@
 import React, { useState, useEffect } from 'react';
-import { Reorder, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowUp } from 'react-icons/fa';
-import { twMerge } from 'tailwind-merge';
-
-const initialFeatures = [
-  { id: 1, title: 'Recipe AI', description: 'Generate recipes from ingredients.', votes: 0, voted: false },
-  { id: 2, title: 'Budget Tracker', description: 'Track expenses and manage budgets.', votes: 0, voted: false },
-  { id: 3, title: 'Gym Logger', description: 'Log workouts and track progress.', votes: 0, voted: false },
-];
+import { db } from '../firebase'; // Ensure path is correct
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, increment } from 'firebase/firestore';
 
 const RoadmapCard = () => {
-  const [features, setFeatures] = useState(initialFeatures);
+  const [ideas, setIdeas] = useState([]);
+  const [votedItems, setVotedItems] = useState([]);
 
-  const handleVote = (id) => {
-    setFeatures((prevFeatures) => {
-      const newFeatures = prevFeatures.map((feature) =>
-        feature.id === id ? { ...feature, votes: feature.votes + 1, voted: true } : feature
-      );
-      return newFeatures.sort((a, b) => b.votes - a.votes);
+  // Load votes from local storage on mount
+  useEffect(() => {
+    const storedVotes = JSON.parse(localStorage.getItem('votedItems') || '[]');
+    setVotedItems(storedVotes);
+  }, []);
+
+  // Real-time listener for Firestore
+  useEffect(() => {
+    const q = query(collection(db, 'roadmap'), orderBy('votes', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const ideasData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setIdeas(ideasData);
     });
+    return () => unsubscribe();
+  }, []);
+
+  const handleVote = async (id) => {
+    if (votedItems.includes(id)) return;
+
+    // 1. Optimistic UI update (optional, but feels faster)
+    // 2. Update Firestore
+    const itemRef = doc(db, 'roadmap', id);
+    await updateDoc(itemRef, { votes: increment(1) });
+
+    // 3. Save to local storage
+    const newVotedItems = [...votedItems, id];
+    setVotedItems(newVotedItems);
+    localStorage.setItem('votedItems', JSON.stringify(newVotedItems));
   };
 
   return (
-    <div className="bg-neutral-900 text-white p-6 rounded-3xl h-full flex flex-col">
-      <h2 className="text-2xl font-bold mb-4 text-gray-100">Up Next</h2>
-      <Reorder.Group axis="y" values={features} onReorder={setFeatures} className="space-y-3">
-        {features.map((feature) => (
-          <FeatureItem key={feature.id} feature={feature} onVote={handleVote} />
-        ))}
-      </Reorder.Group>
+    <div className="col-span-1 md:col-span-1 row-span-2 bg-slate-900 rounded-3xl p-8 overflow-hidden flex flex-col h-full relative">
+       {/* Added p-8 above to fix the 'cut off' text issue */}
+      
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-white">Up Next</h2>
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Vote for features</span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+        <AnimatePresence>
+          {ideas.map((idea) => {
+            const hasVoted = votedItems.includes(idea.id);
+            return (
+              <motion.div
+                layout
+                key={idea.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="bg-neutral-800/50 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-colors flex gap-4 items-center group"
+              >
+                {/* Vote Button */}
+                <button
+                  onClick={() => handleVote(idea.id)}
+                  disabled={hasVoted}
+                  className={`flex flex-col items-center justify-center min-w-[3.5rem] h-14 rounded-lg transition-all duration-300 ${
+                    hasVoted
+                      ? 'bg-green-500/20 text-green-400 cursor-default'
+                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer'
+                  }`}
+                >
+                  <FaArrowUp className={`w-4 h-4 mb-1 ${hasVoted ? '' : 'group-hover:-translate-y-0.5 transition-transform'}`} />
+                  <span className="text-sm font-bold font-mono">{idea.votes}</span>
+                </button>
+
+                {/* Text Content */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white font-semibold text-sm truncate">{idea.title}</h3>
+                  <p className="text-gray-400 text-xs mt-0.5 line-clamp-2 leading-relaxed">
+                    {idea.pitch}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+      
+      {/* Fade at bottom for scrolling list */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none" />
     </div>
   );
 };
-
-const FeatureItem = ({ feature, onVote }) => {
-    const y = useMotionValue(0);
-    return (
-        <Reorder.Item
-          value={feature}
-          id={feature.id}
-          style={{ y }}
-          className="bg-neutral-800 p-4 rounded-lg flex justify-between items-center cursor-grab active:cursor-grabbing"
-        >
-          <div>
-            <h3 className="font-bold text-gray-100">{feature.title}</h3>
-            <p className="text-sm text-gray-400">{feature.description}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="font-semibold text-gray-300">{feature.votes}</span>
-            <button
-              onClick={() => onVote(feature.id)}
-              className="p-2 rounded-full hover:bg-neutral-700 transition-colors"
-            >
-              <FaArrowUp className={twMerge("w-4 h-4", feature.voted ? "text-green-500" : "text-gray-400")} />
-            </button>
-          </div>
-        </Reorder.Item>
-    )
-}
 
 export default RoadmapCard;
