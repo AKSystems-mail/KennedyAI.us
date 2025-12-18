@@ -16,7 +16,7 @@ const BentoGrid = () => {
                 </div>
 
                 {/* Card for Roadmap - Acts as anchor for "View My Work" */}
-                <div id="work-section" className="col-span-1 md:col-span-1 md:row-span-2 bg-slate-900 rounded-3xl p-6">
+                <div id="work-section" className="col-span-1 md:col-span-1 md:row-span-2 bg-slate-900 rounded-3xl p-8">
                     <RoadmapCard />
                 </div>
 
@@ -38,7 +38,7 @@ const BentoGrid = () => {
                 />
 
                 {/* Middle Right (1x1): Current Status / Spotify */}
-                <div className="col-span-1 md:col-span-1 bg-slate-900 rounded-3xl p-6">
+                <div className="col-span-1 md:col-span-1 bg-slate-900 rounded-3xl p-8">
                     <SpotifyCard />
                 </div>
 

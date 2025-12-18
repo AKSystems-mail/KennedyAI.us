@@ -42,8 +42,7 @@ const RoadmapCard = () => {
   };
 
   return (
-    <div className="col-span-1 md:col-span-1 row-span-2 bg-slate-900 rounded-3xl p-8 overflow-hidden flex flex-col h-full relative">
-       {/* Added p-8 above to fix the 'cut off' text issue */}
+    <div className="overflow-hidden flex flex-col h-full relative">
       
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Up Next</h2>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaApple, FaGooglePlay } from 'react-icons/fa';
-
 const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
   return (
     <motion.div
@@ -23,16 +22,13 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
           <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-black" />
         )}
       </div>
-
       {/* Dark Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/90 group-hover:via-black/60 group-hover:to-black transition-colors duration-500" />
-
       {/* Content Container - UPDATED PADDING HERE */}
       <div className="relative z-10 h-full p-8 flex flex-col justify-between">
         
         {/* Top Spacer */}
         <div className="flex justify-end"></div>
-
         {/* Bottom Section: Text & Buttons */}
         <div className="flex flex-col gap-3 mt-auto">
           <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
@@ -41,7 +37,6 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
           <p className="text-gray-300 text-sm mb-4 line-clamp-2 drop-shadow-sm font-medium">
             {description}
           </p>
-
           <div className="flex flex-wrap gap-2">
             {iosUrl && (
               <a
@@ -57,7 +52,6 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
                 </div>
               </a>
             )}
-
             {androidUrl && (
               <a
                 href={androidUrl}
@@ -78,5 +72,4 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
     </motion.div>
   );
 };
-
 export default AppCard;
