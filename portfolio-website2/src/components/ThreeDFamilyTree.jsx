@@ -1,10 +1,37 @@
-/* eslint-disable react/no-unknown-property */
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Float, Sphere, Text, Sparkles, Ring } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { OrbitControls, useGLTF, Float, Sphere, Text, Sparkles, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { corleoneFamily } from '../utils/familyTreeLogic';
+
+// Generate a procedural texture for the fruit look
+const useFruitTexture = () => {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+
+    // Background
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, 512, 512);
+
+    // Noise / Speckles
+    for (let i = 0; i < 10000; i++) {
+      const x = Math.random() * 512;
+      const y = Math.random() * 512;
+      const opacity = Math.random() * 0.2;
+      const size = Math.random() * 2 + 1;
+      context.fillStyle = `rgba(0,0,0,${opacity})`;
+      context.beginPath();
+      context.arc(x, y, size, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    return texture;
+  }, []);
+};
 
 // 1. Load the Model & Apply Matrix Look
 const HologramTree = (props) => {
@@ -13,13 +40,19 @@ const HologramTree = (props) => {
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
+        const name = child.name.toLowerCase();
+        const isFoliage = name.includes('leaf') || name.includes('foliage') || name.includes('leaves');
+
+        const color = isFoliage ? "#00ffff" : "#1e40af";
+        const emissive = isFoliage ? "#00ffff" : "#1e3a8a";
+
         child.material = new THREE.MeshStandardMaterial({
-          color: "cyan",
-          emissive: "cyan",
-          emissiveIntensity: 2,
+          color: color,
+          emissive: emissive,
+          emissiveIntensity: isFoliage ? 0.1 : 0.8,
           wireframe: true,
           transparent: true,
-          opacity: 0.8
+          opacity: isFoliage ? 0.15 : 0.6
         });
       }
     });
@@ -29,55 +62,33 @@ const HologramTree = (props) => {
 };
 
 // 2. Family Node Logic
-const FamilyNode = ({ node, onClick, onHover, index, totalInGen }) => {
-  // Calculate Position based on Generation
-  const position = useMemo(() => {
-    let y = 0;
-    let radius = 2;
-
-    // Gen 1 (Roots)
-    if (node.generation === 1) {
-      y = -1.5;
-      radius = 1.5;
-    }
-    // Gen 2 (Trunk)
-    else if (node.generation === 2) {
-      y = 0.5;
-      radius = 2.5;
-    }
-    // Gen 3 (Branches)
-    else {
-      y = 3;
-      radius = 3.5;
-    }
-
-    // Distribute in a circle
-    const angle = (index / totalInGen) * Math.PI * 2;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-
-    return [x, y, z];
-  }, [node.generation, index, totalInGen]);
-
+const FamilyNode = ({ node, onClick, onHover, fruitTexture }) => {
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-      <group position={position}>
-        {/* Text Label */}
-        <Text
-          position={[0, 0.6, 0]}
-          fontSize={0.3}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.02}
-          outlineColor="black"
+    <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
+      <group position={node.position}>
+        {/* Text Label - Always faces camera */}
+        <Billboard
+          follow={true}
+          lockX={false}
+          lockY={false}
+          lockZ={false}
+          position={[0, node.size + 0.2, 0]}
         >
-          {node.name.split(' ')[0]}
-        </Text>
+          <Text
+            fontSize={0.2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+            outlineWidth={0.02}
+            outlineColor="black"
+          >
+            {node.name.split(' ')[0]}
+          </Text>
+        </Billboard>
 
-        {/* Glowing Sphere */}
+        {/* Fruit Dot (3D Sphere) */}
         <Sphere
-          args={[0.3, 32, 32]}
+          args={[node.size || 0.25, 64, 64]}
           onClick={(e) => {
             e.stopPropagation();
             onClick(node);
@@ -92,11 +103,24 @@ const FamilyNode = ({ node, onClick, onHover, index, totalInGen }) => {
             document.body.style.cursor = 'auto';
           }}
         >
-          <meshStandardMaterial
-            color={node.generation === 1 ? "#ffd700" : node.generation === 2 ? "#ff00ff" : "#00ffff"}
-            emissive={node.generation === 1 ? "#ffd700" : node.generation === 2 ? "#ff00ff" : "#00ffff"}
-            emissiveIntensity={1.5}
-            toneMapped={false}
+          <meshPhysicalMaterial
+            map={fruitTexture}
+            color={node.color}
+            roughness={0}
+            metalness={0}
+            emissive={node.color}
+            emissiveIntensity={4} // Very bright neon center
+            bumpMap={fruitTexture}
+            bumpScale={0.1}
+          />
+        </Sphere>
+        {/* Radiating Halo Effect */}
+        <Sphere args={[node.size * 2.2, 16, 16]}>
+          <meshBasicMaterial
+            color={node.color}
+            transparent={true}
+            opacity={0.25}
+            depthWrite={false}
           />
         </Sphere>
       </group>
@@ -104,89 +128,132 @@ const FamilyNode = ({ node, onClick, onHover, index, totalInGen }) => {
   );
 };
 
-// Flatten tree for easier rendering loop
-const flattenTree = (person, list = []) => {
-  list.push(person);
-  if (person.children) {
-    person.children.forEach(child => flattenTree(child, list));
+// Recursive Layout Logic
+const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI * 2 }, parentPos = { x: 0, y: 0, z: 0 }, branchColor = null) => {
+  let nodes = [];
+  // Vibrant Neon Palette
+  const colors = ["#00ffff", "#ff00ff", "#39ff14", "#ffff00", "#ff3131", "#1f51ff"];
+
+  // Settings per generation (Reduced sizes for technical network look)
+  const config = [
+    { y: -1.2, radius: 0, size: 0.12 },    // Gen 1
+    { y: 0.5, radius: 1.8, size: 0.10 },   // Gen 2
+    { y: 2.2, radius: 3.2, size: 0.08 },   // Gen 3
+    { y: 3.5, radius: 4.5, size: 0.06 },   // Gen 4
+    { y: 4.5, radius: 5.5, size: 0.04 }    // Gen 5
+  ];
+
+  const currentConfig = config[Math.min(depth, config.length - 1)];
+
+  // Determine Color: Gen 1 Gold, Gen 2+ Branch Color
+  let myColor = branchColor;
+  if (depth === 0) {
+    myColor = "#ffd700"; // Gold for Gen 1
+  } else if (depth === 1 && !myColor) {
+    // Assign branch color if not yet assigned (Gen 2)
+    // We need index to pick color, handled in loop below
   }
-  return list;
+
+  // Calculate my position
+  let x = 0, z = 0;
+  if (depth === 0) {
+    x = 0; z = 0.6; // Slight offset z to pop out of trunk
+  } else {
+    // Center of my angle range
+    const myAngle = (angleRange.start + angleRange.end) / 2;
+    x = Math.cos(myAngle) * currentConfig.radius;
+    z = Math.sin(myAngle) * currentConfig.radius;
+  }
+
+  nodes.push({
+    ...root,
+    position: [x, currentConfig.y, z],
+    color: myColor || "#ffffff",
+    size: currentConfig.size,
+    depth
+  });
+
+  // Process Children
+  if (root.children && root.children.length > 0) {
+    const children = root.children;
+    const count = children.length;
+
+    // Divide my angle range among children
+    const totalAngle = angleRange.end - angleRange.start;
+    const step = totalAngle / count;
+
+    children.forEach((child, i) => {
+      let childStart = angleRange.start + (i * step);
+      let childEnd = childStart + step;
+
+      // For Gen 1 -> Gen 2, we distribute around full 360 (already passed in as init)
+      // For Gen 2+, we constrain to parent's sector so branches don't overlap too much
+
+      // Determine color for child
+      let cColor = myColor;
+      if (depth === 0) {
+        cColor = colors[i % colors.length];
+      }
+
+      const childNodes = calculateLayout(
+        child,
+        depth + 1,
+        { start: childStart, end: childEnd },
+        { x, y: currentConfig.y, z },
+        cColor
+      );
+      nodes = nodes.concat(childNodes);
+    });
+  }
+
+  return nodes;
 };
 
-const ThreeDFamilyTree = ({ onNodeClick, onNodeHover }) => {
-  const flatList = useMemo(() => flattenTree(corleoneFamily), []);
-
-  // Group by generation for spacing logic
-  const genCounts = {};
-  flatList.forEach(p => {
-    genCounts[p.generation] = (genCounts[p.generation] || 0) + 1;
-  });
-  const genIndices = {}; // To track index within generation
+const ThreeDFamilyTree = ({ familyData = corleoneFamily, onNodeClick, onNodeHover }) => {
+  const layoutNodes = useMemo(() => calculateLayout(familyData), [familyData]);
+  const fruitTexture = useFruitTexture();
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#050505' }}>
       <Canvas
-        camera={{ position: [0, 2, 8], fov: 50 }}
-        dpr={1}
-        gl={{ antialias: false, powerPreference: "default" }}
+        camera={{ position: [0, 2, 12], fov: 40 }}
+        dpr={[1, 2]}
+        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
       >
-        {/* Lights */}
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} />
+        <color attach="background" args={["#02040a"]} />
 
-        {/* The Matrix Tree */}
-        <HologramTree position={[0, -2, 0]} scale={[1, 1, 1]} />
-        {/* Note: Scale might need adjustment depending on the GLB. Assuming standard size or large. */}
-        {/* If tree is huge, scale down. If small, scale up. 0.01 is common for massive exports. */}
-        {/* I'll use scale=1 initially, user said "Center at [0, -2, 0]". I'll guess scale. */}
+        {/* Cinematic Lighting */}
+        <ambientLight intensity={0.2} />
+        {/* Main Key Light */}
+        <pointLight position={[5, 10, 10]} intensity={1.5} color="#ffffff" castShadow />
+        {/* Rim Light (Cool) */}
+        <spotLight position={[-10, 5, -5]} angle={0.5} penumbra={1} intensity={2} color="#00ffff" />
+        {/* Fill Light (Warm) */}
+        <pointLight position={[0, -5, 5]} intensity={0.5} color="#ffd700" />
 
-        {/* 🌟 EFFECT: Floating Particles (Disabled for Performance) */}
-        {/* <Sparkles
-          count={200}
-          scale={[10, 10, 10]}
-          size={4}
-          speed={0.4}
-          opacity={0.6}
-          color="#00ffff"
-        /> */}
+        <HologramTree position={[0, -2, 0]} scale={[1.2, 1.2, 1.2]} />
 
-        {/* 🌟 EFFECT: Glowing Ground Ring */}
-        <group position={[0, -2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <Ring args={[3, 3.2, 64]}>
-            <meshBasicMaterial color="#00ffff" transparent opacity={0.5} side={THREE.DoubleSide} />
-          </Ring>
-          <Ring args={[0, 3, 64]}>
-            <meshBasicMaterial color="#000000" transparent opacity={0.8} />
-          </Ring>
-        </group>
+        <gridHelper args={[20, 20, "#112233", "#050911"]} position={[0, -2, 0]} />
+        <Sparkles count={40} scale={[8, 8, 8]} size={3} speed={0.2} color="#00ffff" opacity={0.5} />
 
-        {/* Family Nodes */}
-        {flatList.map((node) => {
-          const idx = genIndices[node.generation] || 0;
-          genIndices[node.generation] = idx + 1;
-          const total = genCounts[node.generation];
+        {layoutNodes.map((node) => (
+          <FamilyNode
+            key={node.id}
+            node={node}
+            fruitTexture={fruitTexture}
+            onClick={onNodeClick}
+            onHover={onNodeHover}
+          />
+        ))}
 
-          return (
-            <FamilyNode
-              key={node.id}
-              node={node}
-              index={idx}
-              totalInGen={total}
-              onClick={onNodeClick}
-              onHover={onNodeHover}
-            />
-          );
-        })}
-
-        {/* Controls & Shine */}
-        <OrbitControls minDistance={4} maxDistance={20} enablePan={false} maxPolarAngle={Math.PI / 1.8} />
-
-        {/* LITE MODE: Post-processing removed for 2015 MBP compatibility */}
-        {/* <EffectComposer disableNormalPass>
-            <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.6} />
-            <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer> */}
+        <OrbitControls
+          minDistance={5}
+          maxDistance={25}
+          enablePan={false}
+          maxPolarAngle={Math.PI / 1.5}
+          autoRotate
+          autoRotateSpeed={0.5}
+        />
       </Canvas>
     </div>
   );

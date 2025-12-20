@@ -12,3 +12,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Add to index.css */
+.rounded-3xl {
+  overflow: hidden; /* Prevents content from bleeding outside rounded corners */
+}
+
+/* Ensure text containers have minimum padding */
+[class*="bg-"] > *:first-child:not(button):not(a) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}

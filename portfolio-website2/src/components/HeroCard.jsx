@@ -21,8 +21,7 @@ const HeroCard = () => {
     };
 
     return (
-        // UPDATED PADDING: p-10 on mobile, p-20 on desktop left
-        <div className="h-full w-full bg-gray-900 relative overflow-hidden flex flex-col justify-center p-10 md:p-16 md:pl-20 rounded-3xl">
+        <div className="h-full w-full bg-gray-900 relative overflow-hidden flex flex-col justify-center p-8 rounded-3xl">
             {/* Animated Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 animate-gradient-xy opacity-90" />
 
@@ -61,7 +60,7 @@ const HeroCard = () => {
                     </span>
                 </motion.div>
 
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-8">
                     <motion.button
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -69,7 +68,7 @@ const HeroCard = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={scrollToWork}
-                        className="group bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold text-base hover:bg-gray-100 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center gap-2 cursor-pointer"
+                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
                     >
                         View My Work
                         <svg className="w-5 h-5 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +83,7 @@ const HeroCard = () => {
                         transition={{ delay: 0.9, duration: 0.5 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group bg-neutral-800/80 backdrop-blur-sm text-white border border-white/10 px-8 py-3.5 rounded-full font-bold text-base hover:bg-neutral-700 transition-all flex items-center gap-2 cursor-pointer"
+                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
                     >
                         <FiMail className="w-5 h-5" />
                         Contact Me

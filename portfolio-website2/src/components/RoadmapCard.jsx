@@ -42,11 +42,10 @@ const RoadmapCard = () => {
   };
 
   return (
-    <div className="overflow-hidden flex flex-col h-full relative">
-      
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Up Next</h2>
-        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Vote for features</span>
+    <div className="bg-slate-900 rounded-3xl p-8 overflow-hidden flex flex-col h-full relative pt-6">
+      <div className="flex flex-col mb-6 space-y-2 pt-4">
+        <h2 className="text-2xl font-bold text-white px-4">In Progress...</h2>
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider px-4">Vote For The Next Project</span>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
@@ -60,17 +59,16 @@ const RoadmapCard = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-neutral-800/50 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-colors flex gap-4 items-center group"
+                className="bg-neutral-800/50 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-colors flex gap-4 items-center group"
               >
                 {/* Vote Button */}
                 <button
                   onClick={() => handleVote(idea.id)}
                   disabled={hasVoted}
-                  className={`flex flex-col items-center justify-center min-w-[3.5rem] h-14 rounded-lg transition-all duration-300 ${
-                    hasVoted
-                      ? 'bg-green-500/20 text-green-400 cursor-default'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer'
-                  }`}
+                  className={`flex flex-col items-center justify-center min-w-[3.5rem] h-14 rounded-xl transition-all duration-300 ${hasVoted
+                    ? 'bg-green-500/20 text-green-400 cursor-default'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer'
+                    }`}
                 >
                   <FaArrowUp className={`w-4 h-4 mb-1 ${hasVoted ? '' : 'group-hover:-translate-y-0.5 transition-transform'}`} />
                   <span className="text-sm font-bold font-mono">{idea.votes}</span>
@@ -88,7 +86,7 @@ const RoadmapCard = () => {
           })}
         </AnimatePresence>
       </div>
-      
+
       {/* Fade at bottom for scrolling list */}
       <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none" />
     </div>

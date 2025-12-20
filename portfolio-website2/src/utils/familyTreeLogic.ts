@@ -99,24 +99,6 @@ export const findRelationship = (personA_ID: string, personB_ID: string, treeDat
     if (!personA || !personB) return "Person not found in tree.";
     if (personA_ID === personB_ID) return "Same person.";
 
-    // Calculate distance or relationship based on Logic
-    // Logic:
-    // Same parent = 'Siblings'.
-    // Parent/Child = 'Parent/Child'.
-    // Same Grandparent but different Parent = 'First Cousins'.
-    // Sibling of Parent = 'Aunt/Uncle/Niece/Nephew'.
-
-    // Check Parent/Child
-    if (personA.parentId === personB.id) return `${personB.name} is ${personA.name}'s Parent`;
-    if (personB.parentId === personA.id) return `${personA.name} is ${personB.name}'s Parent`; // Or Child, depending on phrasing. Prompt says "Parent/Child"
-
-    // Check Siblings (Same Parent)
-    // Note: Root has no parentId (undefined). If both undefined, they are main roots? (Usually one root).
-    if (personA.parentId && personB.parentId && personA.parentId === personB.parentId) {
-        return `${personA.name} is ${personB.name}'s Sibling`;
-    }
-
-    // Get older generations to check Grandparents/Uncles
     const getAncestors = (id: string, map: Map<string, FlattenedPerson>): string[] => {
         const ancestors: string[] = [];
         let current = map.get(id);
@@ -130,43 +112,60 @@ export const findRelationship = (personA_ID: string, personB_ID: string, treeDat
     const aAncestors = getAncestors(personA.id, peopleMap);
     const bAncestors = getAncestors(personB.id, peopleMap);
 
-    // Check Aunt/Uncle / Niece/Nephew
-    // Case 1: A's parent is B's sibling. (B is A's Aunt/Uncle, A is B's Niece/Nephew)
-    if (personA.parentId) {
-        const parentA = peopleMap.get(personA.parentId);
-        if (parentA && parentA.parentId && personB.parentId && parentA.parentId === personB.parentId) {
-            // ParentA and PersonB are siblings.
-            if (personB.generation < personA.generation) {
-                return `${personB.name} is ${personA.name}'s Aunt/Uncle`;
-            } else {
-                return `${personA.name} is ${personB.name}'s Niece/Nephew`;
-            }
-        }
-    }
-    // Case 2: B's parent is A's sibling. (A is B's Aunt/Uncle, B is A's Niece/Nephew)
-    if (personB.parentId) {
-        const parentB = peopleMap.get(personB.parentId);
-        if (parentB && parentB.parentId && personA.parentId && parentB.parentId === personA.parentId) {
-            // ParentB and PersonA are siblings.
-            if (personA.generation < personB.generation) {
-                return `${personA.name} is ${personB.name}'s Aunt/Uncle`;
-            } else {
-                return `${personB.name} is ${personA.name}'s Niece/Nephew`;
-            }
+    // Find Lowest Common Ancestor (LCA)
+    let lcaId: string | null = null;
+    let aDistance = 0;
+    let bDistance = 0;
+
+    for (let i = 0; i < aAncestors.length; i++) {
+        const bIdx = bAncestors.indexOf(aAncestors[i]);
+        if (bIdx !== -1) {
+            lcaId = aAncestors[i];
+            aDistance = i + 1;
+            bDistance = bIdx + 1;
+            break;
         }
     }
 
-    // Check First Cousins
-    // Share same grandparent, different parents.
-    if (aAncestors.length >= 2 && bAncestors.length >= 2) {
-        if (aAncestors[1] === bAncestors[1] && personA.parentId !== personB.parentId) {
-            return `${personA.name} is ${personB.name}'s First Cousin`;
-        }
+    // Direct descent
+    if (personB.parentId === personA.id) return `${personA.name} is ${personB.name}'s Parent`;
+    if (personA.parentId === personB.id) return `${personA.name} is ${personB.name}'s Child`;
+
+    if (aAncestors.includes(personB.id)) {
+        const dist = aAncestors.indexOf(personB.id) + 1;
+        if (dist === 2) return `${personB.name} is ${personA.name}'s Grandparent`;
+        if (dist === 3) return `${personB.name} is ${personA.name}'s Great-Grandparent`;
+        return `${personB.name} is ${personA.name}'s Ancestor`;
+    }
+    if (bAncestors.includes(personA.id)) {
+        const dist = bAncestors.indexOf(personA.id) + 1;
+        if (dist === 2) return `${personA.name} is ${personB.name}'s Grandchild`;
+        if (dist === 3) return `${personA.name} is ${personB.name}'s Great-Grandchild`;
+        return `${personA.name} is ${personB.name}'s Descendant`;
     }
 
-    // Fallback for general path finding or deeper relationships?
-    // The user asked for specific logic mapping, but also "traverse the tree to find the shortest path".
-    // Let's implement a BFS for shortest path just in case, but prioritize the specific logic rules requested.
+    // Shared LCA
+    if (lcaId) {
+        // Siblings
+        if (aDistance === 1 && bDistance === 1) return `${personA.name} and ${personB.name} are Siblings`;
 
-    return "Relationship not defined in basic logic.";
+        // Aunt/Uncle and Niece/Nephew
+        if (aDistance === 1 && bDistance === 2) return `${personA.name} is ${personB.name}'s Aunt/Uncle`;
+        if (aDistance === 2 && bDistance === 1) return `${personA.name} is ${personB.name}'s Niece/Nephew`;
+
+        // Great Aunt/Uncle
+        if (aDistance === 1 && bDistance === 3) return `${personA.name} is ${personB.name}'s Great Aunt/Uncle`;
+        if (aDistance === 3 && bDistance === 1) return `${personA.name} is ${personB.name}'s Great Niece/Nephew`;
+
+        // Cousins
+        if (aDistance === 2 && bDistance === 2) return `${personA.name} and ${personB.name} are First Cousins`;
+        if (aDistance === 3 && bDistance === 3) return `${personA.name} and ${personB.name} are Second Cousins`;
+
+        // Removed cousins
+        if (aDistance === 2 && bDistance === 3) return `${personA.name} and ${personB.name} are First Cousins once removed`;
+        if (aDistance === 3 && bDistance === 2) return `${personA.name} and ${personB.name} are First Cousins once removed`;
+    }
+
+    return "They are related through the family tree.";
 };
+

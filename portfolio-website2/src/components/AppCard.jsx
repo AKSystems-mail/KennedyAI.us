@@ -4,7 +4,7 @@ import { FaApple, FaGooglePlay } from 'react-icons/fa';
 const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
   return (
     <motion.div
-      className="group relative col-span-1 md:col-span-1 h-[300px] md:h-auto rounded-3xl overflow-hidden cursor-default bg-slate-900"
+      className="group relative col-span-1 md:col-span-1 h-[300px] md:h-[380px] rounded-3xl overflow-hidden cursor-default bg-slate-900"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -26,11 +26,11 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/90 group-hover:via-black/60 group-hover:to-black transition-colors duration-500" />
       {/* Content Container - UPDATED PADDING HERE */}
       <div className="relative z-10 h-full p-8 flex flex-col justify-between">
-        
+
         {/* Top Spacer */}
         <div className="flex justify-end"></div>
-        {/* Bottom Section: Text & Buttons */}
-        <div className="flex flex-col gap-3 mt-auto">
+        {/* Bottom Section: Text & Buttons - ADD px-4 HERE */}
+        <div className="flex flex-col gap-3 mt-auto px-4 pb-4">
           <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
             {title}
           </h3>
