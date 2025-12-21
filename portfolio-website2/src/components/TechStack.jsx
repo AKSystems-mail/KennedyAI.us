@@ -47,7 +47,7 @@ const marqueeData = [...techData, ...techData];
 const TechStack = () => {
   return (
     <div
-      className="col-span-1 md:col-span-3 bg-slate-900 rounded-3xl p-8 flex items-center overflow-hidden relative group"
+      className="col-span-1 md:col-span-3 bg-transparent p-8 flex items-center overflow-hidden relative group"
       style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
     >
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiMail } from 'react-icons/fi';
+import { FiMail, FiDownload } from 'react-icons/fi';
 
 const HeroCard = () => {
     const roles = ['Kotlin Developer', 'SwiftUI Enthusiast', 'Problem Solver'];
@@ -21,7 +21,9 @@ const HeroCard = () => {
     };
 
     return (
-        <div className="h-full w-full bg-gray-900 relative overflow-hidden flex flex-col justify-center p-8 rounded-3xl">
+        <div
+            className="h-full w-full bg-transparent relative overflow-hidden flex flex-col justify-center p-8 rounded-3xl"
+        >
             {/* Animated Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 animate-gradient-xy opacity-90" />
 
@@ -87,6 +89,21 @@ const HeroCard = () => {
                     >
                         <FiMail className="w-5 h-5" />
                         Contact Me
+                    </motion.a>
+
+                    <motion.a
+                        href="/Akil_Bjorn_developer.pdf"
+                        download="Akil_Bjorn_developer.pdf"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.0, duration: 0.5 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
+                        title="Download Resume"
+                    >
+                        <FiDownload className="w-5 h-5 group-hover:text-purple-400 transition-colors" />
+                        <span>CV</span>
                     </motion.a>
                 </div>
             </div>

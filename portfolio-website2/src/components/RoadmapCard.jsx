@@ -42,7 +42,9 @@ const RoadmapCard = () => {
   };
 
   return (
-    <div className="bg-slate-900 rounded-3xl p-8 overflow-hidden flex flex-col h-full relative pt-6">
+    <div
+      className="bg-transparent rounded-3xl p-8 overflow-hidden flex flex-col h-full relative pt-6"
+    >
       <div className="flex flex-col mb-6 space-y-2 pt-4">
         <h2 className="text-2xl font-bold text-white px-4">In Progress...</h2>
         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider px-4">Vote For The Next Project</span>
