@@ -70,6 +70,28 @@ const Hero = () => {
         return () => unsubscribe();
     }, []);
 
+    // Auto-load saved tree on login
+    useEffect(() => {
+        if (user && !isReadOnly) {
+            // Automatically load user's saved tree when they log in
+            const autoLoadTree = async () => {
+                try {
+                    const docRef = doc(db, "users", user.uid, "trees", "default");
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setFamilyData(docSnap.data().treeData as Person);
+                        setIsCustomTree(true);
+                        setStatusMessage('Your saved tree has been loaded.');
+                        resetSelection();
+                    }
+                } catch (error) {
+                    console.error("Error auto-loading tree:", error);
+                }
+            };
+            autoLoadTree();
+        }
+    }, [user, isReadOnly]);
+
     // --- FULL SCREEN LOGIC ---
     const toggleFullScreen = () => {
         if (!document.fullscreenElement) {
@@ -194,7 +216,7 @@ const Hero = () => {
                                 ) : (
                                     <button onClick={() => setAuthModalOpen(true)} className="p-2 text-[10px] text-cyan-400 hover:bg-white/5 font-bold">LOGIN / SIGNUP</button>
                                 )}
-                                <button onClick={handleLoadTree} disabled={isLoadingTree} className="p-2 text-[10px] text-cyan-400 hover:bg-white/5 font-bold">{isLoadingTree ? 'LOADING...' : 'LOAD'}</button>
+                                <button onClick={handleLoadTree} disabled={isLoadingTree} className="p-2 text-[10px] text-cyan-400 hover:bg-white/5 font-bold" title="Reload your saved tree">{isLoadingTree ? 'LOADING...' : 'RELOAD'}</button>
                             </div>
                             <div className="grid grid-cols-2 gap-px bg-white/10">
                                 <button onClick={handleSaveTree} disabled={isSaving} className="bg-black/80 p-2 text-[10px] text-green-400 hover:bg-white/5 font-bold">{isSaving ? 'SAVING...' : 'SAVE'}</button>

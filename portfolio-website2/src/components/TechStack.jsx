@@ -7,37 +7,37 @@ const techData = [
     Icon: SiKotlin,
     name: 'Kotlin',
     label: 'Primary language for Android Apps',
-    color: '#7F52FF', // Purple
+    color: '#7F52FF',
   },
   {
     Icon: SiSwift,
     name: 'Swift',
     label: 'Native iOS Development',
-    color: '#F05138', // Orange-Red
+    color: '#F05138',
   },
   {
     Icon: SiReact,
     name: 'React',
     label: 'Web & Cross-platform UI',
-    color: '#61DAFB', // Cyan
+    color: '#61DAFB',
   },
   {
     Icon: SiFirebase,
     name: 'Firebase',
     label: 'Backend-as-a-Service & Analytics',
-    color: '#FFCA28', // Amber/Yellow
+    color: '#FFCA28',
   },
   {
     Icon: SiNodedotjs,
     name: 'Node.js',
     label: 'Server-side Logic & APIs',
-    color: '#339933', // Green
+    color: '#339933',
   },
   {
     Icon: SiGoogleplay,
     name: 'Google Play',
     label: 'App Deployment & Management',
-    color: '#00C06D', // Play Greenish
+    color: '#00C06D',
   },
 ];
 

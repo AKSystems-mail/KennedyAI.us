@@ -22,7 +22,21 @@ export const corleoneFamily: Person = {
                     id: "6",
                     name: "Vincent Corleone",
                     generation: 3,
-                    children: []
+                    spouse: "Grace",
+                    children: [
+                        {
+                            id: "11",
+                            name: "Santino Jr.",
+                            generation: 4,
+                            children: []
+                        },
+                        {
+                            id: "12",
+                            name: "Lucia Corleone",
+                            generation: 4,
+                            children: []
+                        }
+                    ]
                 }
             ]
         },
@@ -42,7 +56,15 @@ export const corleoneFamily: Person = {
                     id: "7",
                     name: "Anthony Corleone",
                     generation: 3,
-                    children: []
+                    spouse: "Sofia",
+                    children: [
+                        {
+                            id: "13",
+                            name: "Michael Jr.",
+                            generation: 4,
+                            children: []
+                        }
+                    ]
                 },
                 {
                     id: "8",
@@ -61,7 +83,15 @@ export const corleoneFamily: Person = {
                     id: "9",
                     name: "Victor Rizzi",
                     generation: 3,
-                    children: []
+                    spouse: "Isabella",
+                    children: [
+                        {
+                            id: "14",
+                            name: "Carlo Rizzi",
+                            generation: 4,
+                            children: []
+                        }
+                    ]
                 },
                 {
                     id: "10",
@@ -93,11 +123,17 @@ const flattenTree = (person: Person, parentId?: string, map: Map<string, Flatten
 
 export const findRelationship = (personA_ID: string, personB_ID: string, treeData: Person): string => {
     const peopleMap = flattenTree(treeData);
-    const personA = peopleMap.get(personA_ID);
-    const personB = peopleMap.get(personB_ID);
+    let personA = peopleMap.get(personA_ID);
+    let personB = peopleMap.get(personB_ID);
 
     if (!personA || !personB) return "Person not found in tree.";
     if (personA_ID === personB_ID) return "Same person.";
+
+    // Always describe relationship from older generation to younger generation
+    // Swap if personB is in an older generation than personA
+    if (personB.generation < personA.generation) {
+        [personA, personB] = [personB, personA];
+    }
 
     const getAncestors = (id: string, map: Map<string, FlattenedPerson>): string[] => {
         const ancestors: string[] = [];
@@ -139,9 +175,10 @@ export const findRelationship = (personA_ID: string, personB_ID: string, treeDat
     }
     if (bAncestors.includes(personA.id)) {
         const dist = bAncestors.indexOf(personA.id) + 1;
-        if (dist === 2) return `${personA.name} is ${personB.name}'s Grandchild`;
-        if (dist === 3) return `${personA.name} is ${personB.name}'s Great-Grandchild`;
-        return `${personA.name} is ${personB.name}'s Descendant`;
+        if (dist === 2) return `${personA.name} is ${personB.name}'s Grandparent`;
+        if (dist === 3) return `${personA.name} is ${personB.name}'s Great-Grandparent`;
+        if (dist === 4) return `${personA.name} is ${personB.name}'s Great-Great-Grandparent`;
+        return `${personA.name} is ${personB.name}'s Ancestor`;
     }
 
     // Shared LCA

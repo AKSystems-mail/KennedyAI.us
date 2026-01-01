@@ -7,6 +7,7 @@ import { collection, query, orderBy, onSnapshot, doc, updateDoc, increment } fro
 const RoadmapCard = () => {
   const [ideas, setIdeas] = useState([]);
   const [votedItems, setVotedItems] = useState([]);
+  const [error, setError] = useState(null);
 
   // Load votes from local storage on mount
   useEffect(() => {
@@ -18,11 +19,19 @@ const RoadmapCard = () => {
   useEffect(() => {
     const q = query(collection(db, 'roadmap'), orderBy('votes', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log("RoadmapCard: Snapshot received", snapshot.size, "docs");
       const ideasData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+      console.log("RoadmapCard: ideasData", ideasData);
       setIdeas(ideasData);
+      setError(null);
+    }, (error) => {
+      console.error("RoadmapCard: Firestore error", error);
+      console.error("RoadmapCard: Error code", error.code);
+      console.error("RoadmapCard: Error message", error.message);
+      setError("Failed to load roadmap. Please try again later.");
     });
     return () => unsubscribe();
   }, []);
@@ -41,6 +50,25 @@ const RoadmapCard = () => {
     localStorage.setItem('votedItems', JSON.stringify(newVotedItems));
   };
 
+  const seedData = async () => {
+    try {
+        const sampleIdeas = [
+            { title: "AI Joke Generator", pitch: "Generate stand-up bits based on trending topics.", votes: 42 },
+            { title: "Family Tree VR", pitch: "Walk through your ancestry in virtual reality.", votes: 15 },
+            { title: "Spotify Mood Mixer", pitch: "Create playlists based on your current biometric data.", votes: 88 }
+        ];
+        
+        const { addDoc, collection } = await import('firebase/firestore');
+        for (const idea of sampleIdeas) {
+            await addDoc(collection(db, 'roadmap'), idea);
+        }
+        alert("Data seeded!");
+    } catch (e) {
+        console.error("Error seeding data:", e);
+        alert("Error seeding data: " + e.message);
+    }
+  };
+
   return (
     <div
       className="bg-transparent rounded-3xl p-8 overflow-hidden flex flex-col h-full relative pt-6"
@@ -48,11 +76,16 @@ const RoadmapCard = () => {
       <div className="flex flex-col mb-6 space-y-2 pt-4">
         <h2 className="text-2xl font-bold text-white px-4">In Progress...</h2>
         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider px-4">Vote For The Next Project</span>
+        <button onClick={seedData} className="text-[10px] text-gray-700 hover:text-red-500 px-4 text-left">DEBUG: Seed Data</button>
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
         <AnimatePresence>
-          {ideas.map((idea) => {
+          {error ? (
+            <div className="text-center py-10">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          ) : ideas.length > 0 ? ideas.map((idea) => {
             const hasVoted = votedItems.includes(idea.id);
             return (
               <motion.div
@@ -85,7 +118,12 @@ const RoadmapCard = () => {
                 </div>
               </motion.div>
             );
-          })}
+          }) : (
+            <div className="text-center py-10">
+              <p className="text-gray-500 text-sm">No active project ideas found.</p>
+              <p className="text-gray-600 text-[10px] mt-2 uppercase tracking-widest">Check back soon for updates!</p>
+            </div>
+          )}
         </AnimatePresence>
       </div>
 

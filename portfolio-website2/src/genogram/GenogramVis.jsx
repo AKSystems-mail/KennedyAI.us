@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, OrbitControls, useGLTF, Float, Sphere, Box, Octahedron, Text, Sparkles, Billboard, Stars, QuadraticBezierLine } from '@react-three/drei';
+import { Html, OrbitControls, useGLTF, Float, Sphere, Box, Octahedron, Text, Sparkles, Billboard, Stars, QuadraticBezierLine, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { corleoneFamily, familyRelationships } from '../utils/genogramLogic';
 
@@ -250,11 +250,11 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
   const colors = ["#ff00ff", "#1f51ff", "#ff4d4d", "#ffffff", "#ffd700"]; // Magenta, Electric Blue, Coral Red, White, Gold
 
   const config = [
-    { y: -1.2, radius: 0, size: 0.18 },     // Increased from 0.12
-    { y: 0.5, radius: 1.5, size: 0.15 },    // Increased from 0.10
-    { y: 2.2, radius: 2.6, size: 0.12 },    // Increased from 0.08
-    { y: 3.5, radius: 3.5, size: 0.09 },    // Increased from 0.06
-    { y: 4.5, radius: 4.2, size: 0.06 }     // Increased from 0.04
+    { y: -1.2, radius: 0, size: 0.18 },     // Gen 1 (Root)
+    { y: 0.5, radius: 2.2, size: 0.15 },    // Gen 2 (Children) - Increased radius per user request (< Gen 3)
+    { y: 2.2, radius: 2.6, size: 0.12 },    // Gen 3 (Grandchildren)
+    { y: 3.5, radius: 3.5, size: 0.09 },    // Gen 4 (Great-Grandchildren)
+    { y: 4.5, radius: 4.2, size: 0.06 }     // Gen 5
   ];
 
   const currentConfig = config[Math.min(depth, config.length - 1)];
@@ -272,6 +272,7 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
     z = Math.sin(myAngle) * currentConfig.radius;
   }
 
+  // Push the main node
   nodes.push({
     ...root,
     position: [x, currentConfig.y, z],
@@ -279,6 +280,26 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
     size: currentConfig.size,
     depth
   });
+
+  // Handle Partners (from new partners array)
+  if (root.partners && root.partners.length > 0) {
+    root.partners.forEach((partner, index) => {
+      // Place partner next to the node.
+      // Spacing: 0.35 units to the right (x-axis) per partner.
+      // "Almost touching"
+      const spacing = 0.35;
+      const partnerX = x + ((index + 1) * spacing);
+
+      nodes.push({
+        ...partner,
+        position: [partnerX, currentConfig.y, z],
+        color: myColor || "#ffffff",
+        size: currentConfig.size,
+        depth,
+        isPartner: true
+      });
+    });
+  }
 
   if (root.children && root.children.length > 0) {
     const children = root.children;
@@ -299,7 +320,76 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
   return nodes;
 };
 
-// --- 6. RELATIONSHIP ARCS COMPONENT ---
+// --- 6. RELATIONSHIP HELPERS ---
+const PulsingLine = ({ start, end, mid, color, lineWidth }) => {
+  const lineRef = useRef();
+  useFrame((state) => {
+    if (lineRef.current) {
+      const t = state.clock.getElapsedTime();
+      // Stronger pulse for green lines
+      const pulse = 1.2 + Math.sin(t * 6) * 0.4;
+      lineRef.current.lineWidth = lineWidth * pulse;
+    }
+  });
+
+  return (
+    <QuadraticBezierLine
+      ref={lineRef}
+      start={start}
+      end={end}
+      mid={mid}
+      color={color}
+      lineWidth={lineWidth}
+    />
+  );
+};
+
+const ZigZagLine = ({ start, end, mid, color, lineWidth }) => {
+  const points = useMemo(() => {
+    // mid is the control point for QuadraticBezier
+    const baseCurve = new THREE.QuadraticBezierCurve3(start, mid, end);
+    const basePoints = baseCurve.getPoints(50);
+    const zigZagPoints = [];
+
+    for (let i = 0; i < basePoints.length; i++) {
+      const p = basePoints[i].clone();
+      if (i > 0 && i < basePoints.length - 1) {
+        // Calculate a perpendicular offset for zig-zag
+        const normal = new THREE.Vector3().subVectors(basePoints[i + 1], basePoints[i - 1]).normalize();
+        const up = new THREE.Vector3(0, 1, 0);
+        const perp = new THREE.Vector3().crossVectors(normal, up).normalize();
+
+        // Offset amount alternates
+        const offsetAmount = (i % 2 === 0 ? 0.25 : -0.25);
+        p.add(perp.multiplyScalar(offsetAmount));
+      }
+      zigZagPoints.push(p);
+    }
+    return zigZagPoints;
+  }, [start, end, mid]);
+
+  const lineRef = useRef();
+  useFrame((state) => {
+    if (lineRef.current) {
+      const t = state.clock.getElapsedTime();
+      // Red pulsing effect for conflict
+      const pulse = 1.5 + Math.sin(t * 8) * 0.5;
+      lineRef.current.material.linewidth = lineWidth * pulse * 2; // Line in drei uses material.linewidth
+    }
+  });
+
+  return (
+    <Line
+      ref={lineRef}
+      points={points}
+      color={color}
+      lineWidth={lineWidth * 3} // Much thicker for conflict
+      transparent
+      opacity={0.9}
+    />
+  );
+};
+
 const RelationshipArcs = ({ nodes, relationships }) => {
   return (
     <group>
@@ -309,29 +399,29 @@ const RelationshipArcs = ({ nodes, relationships }) => {
 
         if (!startNode || !endNode) return null;
 
-        // Determine Style based on type
         let color = 'white';
         let dash = false;
         let width = 1;
-        let midPointOffset = 2; // How high the arc goes
+        let midPointOffset = 2;
 
         switch (rel.type) {
           case 'conflict':
-            color = '#ef4444'; // Red
+            color = '#ef4444';
             midPointOffset = 3;
             break;
           case 'close':
-            color = '#22c55e'; // Green
-            width = 2;
+            color = '#22c55e';
+            width = 3; // Thicker by default
             midPointOffset = 1.5;
             break;
           case 'distant':
-            color = '#9ca3af'; // Grey
+            color = '#9ca3af';
             dash = true;
+            width = 2; // Thicker for visibility
             midPointOffset = 4;
             break;
           case 'codependent':
-            color = '#a855f7'; // Purple
+            color = '#a855f7';
             width = 3;
             midPointOffset = 1;
             break;
@@ -339,14 +429,20 @@ const RelationshipArcs = ({ nodes, relationships }) => {
 
         const start = new THREE.Vector3(...startNode.position);
         const end = new THREE.Vector3(...endNode.position);
-
-        // Calculate a midpoint that is higher up to create an arc
         const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
         mid.y += midPointOffset;
 
+        if (rel.type === 'close') {
+          return <PulsingLine key={`${rel.from}-${rel.to}-${i}`} start={start} end={end} mid={mid} color={color} lineWidth={width} />;
+        }
+
+        if (rel.type === 'conflict') {
+          return <ZigZagLine key={`${rel.from}-${rel.to}-${i}`} start={start} end={end} mid={mid} color={color} lineWidth={width} />;
+        }
+
         return (
           <QuadraticBezierLine
-            key={i}
+            key={`${rel.from}-${rel.to}-${i}`}
             start={start}
             end={end}
             mid={mid}
@@ -358,16 +454,37 @@ const RelationshipArcs = ({ nodes, relationships }) => {
           />
         );
       })}
+
+      {/* MARITAL BARS for partnered nodes */}
+      {nodes.filter(n => n.partnerId).map((node) => {
+        const partner = nodes.find(p => p.id === node.partnerId);
+        if (!partner) return null;
+        // Only render once per pair (avoid duplicates)
+        if (node.id > partner.id) return null;
+
+        const start = new THREE.Vector3(...node.position);
+        const end = new THREE.Vector3(...partner.position);
+
+        return (
+          <Line
+            key={`marital-${node.id}-${partner.id}`}
+            points={[start, end]}
+            color="#fbbf24" // Gold/amber for marriage
+            lineWidth={3}
+            segments
+          />
+        );
+      })}
     </group>
   );
 };
 
 // --- 7. NEW: CONTEXT RING COMPONENT (CIRCULAR HOLOGRAPHIC HUD) ---
-const ContextRing = ({ node, onLink, onEdit, onStatusToggle, onClose }) => {
+const ContextRing = ({ node, onLink, onEdit, onStatusToggle, onClose, readOnly }) => {
   if (!node) return null;
 
   return (
-    <Html position={node.position} center distanceFactor={10}>
+    <Html position={node.position} center distanceFactor={5}>
       <div className="flex flex-col items-center gap-4 pointer-events-auto">
         {/* Circular Holographic HUD */}
         <div className="relative w-56 h-56 flex items-center justify-center">
@@ -389,34 +506,39 @@ const ContextRing = ({ node, onLink, onEdit, onStatusToggle, onClose }) => {
             </div>
 
             {/* Icon Button Grid */}
-            <div className="grid grid-cols-3 gap-3 px-2">
-              {/* Link Button */}
-              <button
-                onClick={() => onLink(node.id)}
-                className="w-12 h-12 bg-cyan-500/10 hover:bg-cyan-500/30 border-2 border-cyan-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
-                title="Link Node"
-              >
-                <span className="text-2xl">🔗</span>
-              </button>
+            {!readOnly && (
+              <div className="grid grid-cols-3 gap-3 px-2">
+                {/* Link Button */}
+                <button
+                  onClick={() => onLink(node.id)}
+                  className="w-12 h-12 bg-cyan-500/10 hover:bg-cyan-500/30 border-2 border-cyan-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+                  title="Link Node"
+                >
+                  <span className="text-2xl">🔗</span>
+                </button>
 
-              {/* Edit Button */}
-              <button
-                onClick={() => onEdit(node)}
-                className="w-12 h-12 bg-purple-500/10 hover:bg-purple-500/30 border-2 border-purple-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
-                title="Edit Details"
-              >
-                <span className="text-2xl">✏️</span>
-              </button>
+                {/* Edit Button */}
+                <button
+                  onClick={() => onEdit(node)}
+                  className="w-12 h-12 bg-purple-500/10 hover:bg-purple-500/30 border-2 border-purple-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                  title="Edit Details"
+                >
+                  <span className="text-2xl">✏️</span>
+                </button>
 
-              {/* Toggle Status Button */}
-              <button
-                onClick={() => onStatusToggle(node.id)}
-                className="w-12 h-12 bg-amber-500/10 hover:bg-amber-500/30 border-2 border-amber-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
-                title="Toggle Status"
-              >
-                <span className="text-2xl">💀</span>
-              </button>
-            </div>
+                {/* Toggle Status Button */}
+                <button
+                  onClick={() => {
+                    onStatusToggle(node.id);
+                    onClose();
+                  }}
+                  className="w-12 h-12 bg-amber-500/10 hover:bg-amber-500/30 border-2 border-amber-500/50 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+                  title="Toggle Status"
+                >
+                  <span className="text-2xl">💀</span>
+                </button>
+              </div>
+            )}
 
             {/* Close Button - positioned inside the circle */}
             <button
@@ -433,14 +555,14 @@ const ContextRing = ({ node, onLink, onEdit, onStatusToggle, onClose }) => {
 };
 
 // --- 8. RELATIONSHIP PICKER MODAL ---
-const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel }) => {
+const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel, onDelete, existingType }) => {
   if (!sourceNode || !targetNode) return null;
 
   const relationshipTypes = [
     { type: 'conflict', label: 'Conflict', color: 'red', emoji: '⚔️', bgClass: 'bg-red-500/20 hover:bg-red-500/40 border-red-500', shadowClass: 'shadow-[0_0_25px_rgba(239,68,68,0.4)]' },
     { type: 'close', label: 'Close', color: 'green', emoji: '💚', bgClass: 'bg-green-500/20 hover:bg-green-500/40 border-green-500', shadowClass: 'shadow-[0_0_25px_rgba(34,197,94,0.4)]' },
-    { type: 'codependent', label: 'Codependent', color: 'purple', emoji: '💜', bgClass: 'bg-purple-500/20 hover:bg-purple-500/40 border-purple-500', shadowClass: 'shadow-[0_0_25px_rgba(168,85,247,0.4)]' },
-    { type: 'distant', label: 'Distant', color: 'gray', emoji: '🌫️', bgClass: 'bg-gray-500/20 hover:bg-gray-500/40 border-gray-500', shadowClass: 'shadow-[0_0_25px_rgba(156,163,175,0.4)]' },
+    { type: 'codependent', label: 'Codependent', color: 'purple', emoji: '🧬', bgClass: 'bg-purple-500/20 hover:bg-purple-500/40 border-purple-500', shadowClass: 'shadow-[0_0_25px_rgba(168,85,247,0.4)]' },
+    { type: 'distant', label: 'Distant', color: 'gray', emoji: '☁️', bgClass: 'bg-gray-500/20 hover:bg-gray-500/40 border-gray-500', shadowClass: 'shadow-[0_0_25px_rgba(156,163,175,0.4)]' },
   ];
 
   return (
@@ -448,7 +570,7 @@ const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel }) => {
       <div className="bg-black/95 border-2 border-cyan-500 rounded-2xl p-8 max-w-md w-full shadow-[0_0_60px_rgba(34,211,238,0.5)] animate-[fadeIn_0.3s_ease-in-out]">
         {/* Header */}
         <h2 className="text-white font-black text-lg uppercase tracking-tight text-center mb-2">
-          Define Relationship
+          {existingType ? 'Update Relationship' : 'Define Relationship'}
         </h2>
         <p className="text-cyan-400 text-sm text-center mb-6">
           How are <span className="font-bold">{sourceNode.name}</span> and <span className="font-bold">{targetNode.name}</span> related?
@@ -460,7 +582,7 @@ const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel }) => {
             <button
               key={type}
               onClick={() => onSelect(type)}
-              className={`${bgClass} ${shadowClass} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95`}
+              className={`${bgClass} ${shadowClass} border-2 ${existingType === type ? 'border-white' : 'border-transparent'} rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95`}
             >
               <span className="text-4xl">{emoji}</span>
               <span className="text-white font-bold text-sm uppercase tracking-wide">{label}</span>
@@ -468,19 +590,29 @@ const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel }) => {
           ))}
         </div>
 
-        {/* Cancel Button */}
-        <button
-          onClick={onCancel}
-          className="w-full bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-white border border-gray-600 rounded-lg py-2 text-sm uppercase font-bold tracking-widest transition-all"
-        >
-          Cancel
-        </button>
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-3">
+          {onDelete && (
+            <button
+              onClick={onDelete}
+              className="w-full bg-red-900/40 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 font-bold py-3 rounded-xl uppercase tracking-widest transition-all mb-2"
+            >
+              🗑️ Delete Relationship
+            </button>
+          )}
+          <button
+            onClick={onCancel}
+            className="w-full bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-white border border-gray-600 rounded-lg py-2 text-xs uppercase font-bold tracking-widest transition-all"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 // --- 9. EDIT NODE MODAL COMPONENT ---
-const EditNodeModal = ({ node, onSave, onCancel }) => {
+const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => {
   const [formData, setFormData] = React.useState({
     name: node?.name || '',
     gender: node?.gender || 'unknown',
@@ -532,21 +664,21 @@ const EditNodeModal = ({ node, onSave, onCancel }) => {
             <div className="grid grid-cols-3 gap-3">
               <button
                 onClick={() => setFormData({ ...formData, gender: 'male' })}
-                className={`${formData.gender === 'male' ? 'bg-blue-500/30 border-blue-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105`}
+                className={`${formData.gender === 'male' ? 'bg-blue-500/30 border-blue-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-110`}
               >
                 <span className="text-3xl">📦</span>
                 <span className="text-white font-bold text-xs uppercase">Male (Cube)</span>
               </button>
               <button
                 onClick={() => setFormData({ ...formData, gender: 'female' })}
-                className={`${formData.gender === 'female' ? 'bg-pink-500/30 border-pink-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105`}
+                className={`${formData.gender === 'female' ? 'bg-pink-500/30 border-pink-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-110`}
               >
                 <span className="text-3xl">⚪</span>
                 <span className="text-white font-bold text-xs uppercase">Female (Sphere)</span>
               </button>
               <button
                 onClick={() => setFormData({ ...formData, gender: 'unknown' })}
-                className={`${formData.gender === 'unknown' ? 'bg-purple-500/30 border-purple-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105`}
+                className={`${formData.gender === 'unknown' ? 'bg-purple-500/30 border-purple-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-110`}
               >
                 <span className="text-3xl">💎</span>
                 <span className="text-white font-bold text-xs uppercase">Unknown (Diamond)</span>
@@ -597,7 +729,6 @@ const EditNodeModal = ({ node, onSave, onCancel }) => {
           <h3 className="text-cyan-400 font-bold text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
             <span className="text-xl">🏥</span> Attributes
           </h3>
-          <p className="text-gray-500 text-xs mb-4 italic">These will eventually add visual indicators to the node</p>
 
           <div className="space-y-3">
             {/* Substance Abuse */}
@@ -610,7 +741,6 @@ const EditNodeModal = ({ node, onSave, onCancel }) => {
               />
               <div>
                 <span className="text-white font-semibold text-sm">Substance Abuse</span>
-                <p className="text-gray-500 text-xs">Visual: Glitch effect</p>
               </div>
             </label>
 
@@ -624,7 +754,6 @@ const EditNodeModal = ({ node, onSave, onCancel }) => {
               />
               <div>
                 <span className="text-white font-semibold text-sm">Mental Health</span>
-                <p className="text-gray-500 text-xs">Visual: Blue orbital satellite</p>
               </div>
             </label>
 
@@ -638,10 +767,38 @@ const EditNodeModal = ({ node, onSave, onCancel }) => {
               />
               <div>
                 <span className="text-white font-semibold text-sm">Physical Illness</span>
-                <p className="text-gray-500 text-xs">Visual: Red orbital satellite</p>
               </div>
             </label>
           </div>
+        </div>
+
+        {/* D. FAMILY ACTIONS SECTION */}
+        <div className="mb-8 p-4 bg-cyan-900/10 rounded-xl border border-cyan-500/20">
+          <h3 className="text-cyan-400 font-bold text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+            <span className="text-xl">🌳</span> Grow Tree
+          </h3>
+          <p className="text-gray-400 text-xs mb-4">
+            Add a new family member connected to <span className="text-white font-bold">{node.name}</span>.
+            Currently supports adding children (next generation).
+          </p>
+          <button
+            onClick={() => {
+              if (onAddChild) onAddChild(node.id);
+              onCancel(); // Close modal after action
+            }}
+            className="w-full bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-300 border border-cyan-500/50 font-bold py-3 rounded-lg uppercase tracking-wide transition-all flex items-center justify-center gap-2 mb-3"
+          >
+            <span>👶</span> Add Child to {node.name}
+          </button>
+          <button
+            onClick={() => {
+              if (onAddPartner) onAddPartner(node.id);
+              onCancel();
+            }}
+            className="w-full bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 border border-purple-500/50 font-bold py-3 rounded-lg uppercase tracking-wide transition-all flex items-center justify-center gap-2"
+          >
+            <span>💑</span> Add Partner to {node.name}
+          </button>
         </div>
 
         {/* Action Buttons */}
@@ -672,7 +829,10 @@ const GenogramVis = ({
   selectedNodeId,
   onLinkStart,
   onStatusToggle,
-  onEditNode
+  onEditNode,
+  onAddChild,
+  readOnly,
+  relationships = familyRelationships
 }) => {
   const layoutNodes = useMemo(() => calculateLayout(familyData), [familyData]);
   const fruitTexture = useFruitTexture();
@@ -708,7 +868,10 @@ const GenogramVis = ({
         <Sparkles count={40} scale={[8, 8, 8]} size={3} speed={0.2} color="#00ffff" opacity={0.5} />
 
         {/* RENDER RELATIONSHIPS */}
-        <RelationshipArcs nodes={layoutNodes} relationships={familyRelationships} />
+        <RelationshipArcs
+          nodes={layoutNodes}
+          relationships={relationships}
+        />
 
         {layoutNodes.map((node) => (
           <FamilyNode
@@ -728,6 +891,7 @@ const GenogramVis = ({
             onEdit={onEditNode}
             onStatusToggle={onStatusToggle}
             onClose={() => onNodeClick(null)}
+            readOnly={readOnly}
           />
         )}
 

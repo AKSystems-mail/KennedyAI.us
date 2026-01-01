@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow anyone to join the waitlist (if used)
+    match /waitlist/{document} {
+        allow read, write: if true;
+    }
+
+    // Genograms: Users can only read/write their own data
+    match /genograms/{genogramId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow list: if request.auth != null && request.query.filters.userId == request.auth.uid;
+    }
+
+    // Users: Private data for family trees (Hero component)
+    match /users/{userId} {
+      match /trees/{treeId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Roadmap: Publicly visible, but limited update for votes
+    match /roadmap/{ideaId} {
+      allow read: if true;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']) 
+                    && request.resource.data.votes == resource.data.votes + 1;
+    }
+  }
+}

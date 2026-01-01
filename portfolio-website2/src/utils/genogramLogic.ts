@@ -2,6 +2,8 @@ export interface Person {
     id: string;
     name: string;
     spouse?: string;
+    partnerId?: string;
+    partners?: Person[];
     generation: number;
     children?: Person[];
     // GENOGRAM PROPS
@@ -49,8 +51,7 @@ export const corleoneFamily: Person = {
         {
             id: '5', name: 'Connie', gender: 'female', status: 'living', spouse: 'Carlo', generation: 2,
             children: [
-                { id: '5-1', name: 'Victor', gender: 'male', status: 'living', generation: 3 },
-                { id: '5-2', name: 'Unknown Child', gender: 'unknown', status: 'living', generation: 3 }
+                { id: '5-1', name: 'Victor', gender: 'male', status: 'living', generation: 3 }
             ]
         }
     ]
@@ -128,5 +129,45 @@ export const findRelationship = (idA: string, idB: string, root: Person): string
         const cousinType = Math.min(distA, distB) - 1;
         return `${cousinType === 1 ? "First" : cousinType === 2 ? "Second" : "Distant"} Cousin ${genDiff}x Removed`;
     }
+    // Check for In-laws (Spouse/Partner logic)
+    // Helper to find a node by ID in the tree
+    const findNode = (n: Person, id: string): Person | null => {
+        if (n.id === id) return n;
+        if (n.children) {
+            for (const c of n.children) {
+                const res = findNode(c, id);
+                if (res) return res;
+            }
+        }
+        return null;
+    };
+
+    const nodeB = findNode(root, idB);
+
+    // 1. Partner of Sibling -> Brother/Sister-in-law
+    if (distA === 1 && distB === 1) { // Sibling relationship
+        // If B is actually a partner of the sibling found at pathB[pathB.length-1]
+        // But our path logic doesn't explicitly track "via partner".
+        // Instead, let's look at the structure directly.
+    }
+
+    // SIMPLER IN-LAW CHECK:
+    // If B's partner is A's sibling -> Brother/Sister-in-law
+    if (nodeB?.partnerId) {
+        const partnerID = nodeB.partnerId;
+        const partnerRelation = findRelationship(idA, partnerID, root);
+        if (partnerRelation === "Sibling") return "Brother/Sister-in-law";
+        if (partnerRelation === "Child") return "Son/Daughter-in-law";
+    }
+
+    // If A's partner is B's sibling -> Brother/Sister-in-law
+    const nodeA = findNode(root, idA);
+    if (nodeA?.partnerId) {
+        const partnerID = nodeA.partnerId;
+        const partnerRelation = findRelationship(partnerID, idB, root);
+        if (partnerRelation === "Sibling") return "Brother/Sister-in-law";
+        if (partnerRelation === "Parent") return "Mother/Father-in-law";
+    }
+
     return "Distant Relative";
 };

@@ -54,7 +54,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                 </p>
 
                 {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-200 text-xs p-3 rounded-lg mb-4">
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-200 text-xs p-3 rounded-none mb-4">
                         {error}
                     </div>
                 )}
@@ -64,7 +64,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                         <input
                             type="text"
                             placeholder="Display Name"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -73,7 +73,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                     <input
                         type="email"
                         placeholder="Email Address"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -81,7 +81,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                     <input
                         type="password"
                         placeholder="Password"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-none px-4 py-3 text-white text-sm outline-none focus:border-cyan-500 transition-all"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -90,7 +90,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-2 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all disabled:opacity-50"
+                        className="w-full mt-2 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-none transition-all disabled:opacity-50"
                     >
                         {loading ? 'Processing...' : (isLogin ? 'Log In' : 'Sign Up')}
                     </button>
