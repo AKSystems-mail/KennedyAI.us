@@ -251,10 +251,10 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
 
   const config = [
     { y: -1.2, radius: 0, size: 0.18 },     // Gen 1 (Root)
-    { y: 0.5, radius: 2.2, size: 0.15 },    // Gen 2 (Children) - Increased radius per user request (< Gen 3)
+    { y: 0.5, radius: 2.6, size: 0.15 },    // Gen 2 (Children) - Matches Gen 3 radius for vertical alignment
     { y: 2.2, radius: 2.6, size: 0.12 },    // Gen 3 (Grandchildren)
     { y: 3.5, radius: 3.5, size: 0.09 },    // Gen 4 (Great-Grandchildren)
-    { y: 4.5, radius: 4.2, size: 0.06 }     // Gen 5
+    { y: 4.5, radius: 2.6, size: 0.06 }     // Gen 5 (Matches Gen 3 radius for vertical alignment)
   ];
 
   const currentConfig = config[Math.min(depth, config.length - 1)];
@@ -304,17 +304,78 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
   if (root.children && root.children.length > 0) {
     const children = root.children;
     const count = children.length;
-    const totalAngle = angleRange.end - angleRange.start;
-    const step = totalAngle / count;
 
     children.forEach((child, i) => {
-      let childStart = angleRange.start + (i * step);
-      let childEnd = childStart + step;
+      let childStart, childEnd;
       let cColor = myColor;
-      if (depth === 0) { cColor = colors[i % colors.length]; }
+
+      // Gen 2: Distribute evenly around full circle
+      if (depth === 0) {
+        const angleStep = (Math.PI * 2) / count;
+        const centerAngle = i * angleStep;
+        const subRangeSize = angleStep * 0.8; // Leave 20% gap between branches
+        childStart = centerAngle - subRangeSize / 2;
+        childEnd = centerAngle + subRangeSize / 2;
+        cColor = colors[i % colors.length];
+      }
+      // Gen 3+: Divide parent's angle range equally among siblings
+      else {
+        const totalAngle = angleRange.end - angleRange.start;
+        const step = totalAngle / count;
+        childStart = angleRange.start + (i * step);
+        childEnd = childStart + step;
+      }
 
       const childNodes = calculateLayout(child, depth + 1, { start: childStart, end: childEnd }, { x, y: currentConfig.y, z }, cColor);
       nodes = nodes.concat(childNodes);
+    });
+  }
+
+  // RECURSE INTO PARTNERS' CHILDREN (Step-children / Partner-only children)
+  if (root.partners) {
+    root.partners.forEach((partner, index) => {
+      if (partner.children && partner.children.length > 0) {
+        // We need to carve out space for these children near the partner
+        // Logic is simplified: drop them below the partner
+        // Ideally, they should share the fan-out, but for now, simple recursion
+        const pChildren = partner.children;
+        const pCount = pChildren.length;
+
+        // Reuse parent params but offset Angle slightly or just use randomness mostly to find space
+        // Best simple hack: Treat them as belonging to the next generation layer
+        // but base position is relative to PARTNER not ROOT
+
+        // Let's create a sub-range for the partner
+        // Visual approximation:
+        const subStart = angleRange.start;
+        const subEnd = angleRange.end;
+
+        // Spacing logic needs to be robust. 
+        // For this implementation, we will append them to the nodes list 
+        // but their 'parentPos' in recursion would be the partner's pos.
+
+        // NOTE: calculateLayout assumes radial based on depth.
+        // We just call it but we might need to adjust the angle logic so they don't overlap primary children
+
+        // WORKAROUND: Pass a flagged angle range or shift them?
+        // Let's just run them with same logic but offset index?
+        pChildren.forEach((child, k) => {
+          // Offset angle by small amount
+          let cStart = angleRange.start + 0.5;
+          let cEnd = angleRange.end + 0.5;
+
+          // Color inheritance
+          let cColor = myColor || "#ffffff";
+
+          // Calculate their nodes
+          const stepNodes = calculateLayout(child, depth + 1, { start: cStart, end: cEnd }, null, cColor);
+
+          // Shift them slightly to align with partner if possible?
+          // The layout algo uses depth/radius absolute. 
+          // So they will appear in the ring. That's fine.
+          nodes = nodes.concat(stepNodes);
+        });
+      }
     });
   }
   return nodes;
@@ -396,44 +457,28 @@ const RelationshipArcs = ({ nodes, relationships }) => {
       {relationships.map((rel, i) => {
         const startNode = nodes.find(n => n.id === rel.from);
         const endNode = nodes.find(n => n.id === rel.to);
-
         if (!startNode || !endNode) return null;
-
-        let color = 'white';
-        let dash = false;
-        let width = 1;
-        let midPointOffset = 2;
-
-        switch (rel.type) {
-          case 'conflict':
-            color = '#ef4444';
-            midPointOffset = 3;
-            break;
-          case 'close':
-            color = '#22c55e';
-            width = 3; // Thicker by default
-            midPointOffset = 1.5;
-            break;
-          case 'distant':
-            color = '#9ca3af';
-            dash = true;
-            width = 2; // Thicker for visibility
-            midPointOffset = 4;
-            break;
-          case 'codependent':
-            color = '#a855f7';
-            width = 3;
-            midPointOffset = 1;
-            break;
-        }
 
         const start = new THREE.Vector3(...startNode.position);
         const end = new THREE.Vector3(...endNode.position);
         const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
-        mid.y += midPointOffset;
+        mid.y += 0.5; // Arc height
 
-        if (rel.type === 'close') {
-          return <PulsingLine key={`${rel.from}-${rel.to}-${i}`} start={start} end={end} mid={mid} color={color} lineWidth={width} />;
+        let color = "#fbbf24"; // Default gold
+        let width = 2;
+
+        if (rel.type === 'conflict') {
+          color = "#ef4444";
+          width = 1;
+        } else if (rel.type === 'close') {
+          color = "#22d3ee";
+          width = 4;
+        } else if (rel.type === 'codependent') {
+          color = "#a855f7";
+          width = 4;
+        } else if (rel.type === 'distant') {
+          color = "#4b5563";
+          width = 4; // Increased thickness for visibility
         }
 
         if (rel.type === 'conflict') {
@@ -448,9 +493,8 @@ const RelationshipArcs = ({ nodes, relationships }) => {
             mid={mid}
             color={color}
             lineWidth={width}
-            dashed={dash}
-            dashScale={dash ? 2 : 0}
-            gapSize={dash ? 1 : 0}
+            transparent
+            opacity={0.6}
           />
         );
       })}
@@ -459,23 +503,63 @@ const RelationshipArcs = ({ nodes, relationships }) => {
       {nodes.filter(n => n.partnerId).map((node) => {
         const partner = nodes.find(p => p.id === node.partnerId);
         if (!partner) return null;
-        // Only render once per pair (avoid duplicates)
         if (node.id > partner.id) return null;
 
         const start = new THREE.Vector3(...node.position);
         const end = new THREE.Vector3(...partner.position);
 
         return (
-          <Line
+          <MaritalLine
             key={`marital-${node.id}-${partner.id}`}
-            points={[start, end]}
-            color="#fbbf24" // Gold/amber for marriage
-            lineWidth={3}
-            segments
+            start={start}
+            end={end}
+            status={node.partnerStatus || partner.partnerStatus || 'married'}
           />
         );
       })}
     </group>
+  );
+};
+
+const MaritalLine = ({ start, end, status }) => {
+  const lineRef = React.useRef();
+
+  useFrame(({ clock }) => {
+    if (!lineRef.current) return;
+    const t = clock.getElapsedTime();
+
+    if (status === 'separated') {
+      const flicker = Math.sin(t * 10) > 0.5 ? 0.3 : 0.6;
+      lineRef.current.material.opacity = flicker;
+      lineRef.current.material.transparent = true;
+    } else if (status === 'divorced') {
+      const glitch = Math.random() > 0.9 ? 0.1 : 0.8;
+      lineRef.current.material.opacity = glitch;
+      lineRef.current.material.transparent = true;
+    } else {
+      lineRef.current.material.opacity = 0.8 + Math.sin(t * 2) * 0.2;
+      lineRef.current.material.transparent = true;
+    }
+  });
+
+  const getColor = () => {
+    switch (status) {
+      case 'separated': return '#9ca3af'; // Gray
+      case 'divorced': return '#ef4444';  // Red
+      default: return '#fbbf24';          // Gold
+    }
+  };
+
+  return (
+    <Line
+      ref={lineRef}
+      points={[start, end]}
+      color={getColor()}
+      lineWidth={4}
+      dashed={status === 'separated' || status === 'divorced'}
+      dashSize={0.05}
+      gapSize={0.02}
+    />
   );
 };
 
@@ -584,25 +668,25 @@ const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel, onDele
               onClick={() => onSelect(type)}
               className={`${bgClass} ${shadowClass} border-2 ${existingType === type ? 'border-white' : 'border-transparent'} rounded-xl p-4 flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95`}
             >
-              <span className="text-4xl">{emoji}</span>
-              <span className="text-white font-bold text-sm uppercase tracking-wide">{label}</span>
+              <span className="text-3xl mb-1">{emoji}</span>
+              <span className="text-white font-black text-sm uppercase tracking-wider">{label}</span>
             </button>
           ))}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-3">
-          {onDelete && (
+        <div className="flex gap-3">
+          {existingType && (
             <button
               onClick={onDelete}
-              className="w-full bg-red-900/40 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 font-bold py-3 rounded-xl uppercase tracking-widest transition-all mb-2"
+              className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-500 border border-red-500/50 font-bold py-3 rounded-xl uppercase tracking-wider transition-all"
             >
-              🗑️ Delete Relationship
+              Delete
             </button>
           )}
           <button
             onClick={onCancel}
-            className="w-full bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-white border border-gray-600 rounded-lg py-2 text-xs uppercase font-bold tracking-widest transition-all"
+            className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-white border border-gray-600 font-bold py-3 rounded-xl uppercase tracking-wider transition-all"
           >
             Cancel
           </button>
@@ -611,7 +695,8 @@ const RelationshipPicker = ({ sourceNode, targetNode, onSelect, onCancel, onDele
     </div>
   );
 };
-// --- 9. EDIT NODE MODAL COMPONENT ---
+
+// --- 9. EDIT PERSON MODAL ---
 const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => {
   const [formData, setFormData] = React.useState({
     name: node?.name || '',
@@ -621,7 +706,24 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
     substanceAbuse: node?.substanceAbuse || false,
     mentalHealth: node?.mentalHealth || false,
     physicalIllness: node?.physicalIllness || false,
+    partnerStatus: node?.partnerStatus || 'married',
   });
+
+  // Sync state if node changes while modal is open (unlikely but good for stability)
+  useEffect(() => {
+    if (node) {
+      setFormData({
+        name: node.name || '',
+        gender: node.gender || 'unknown',
+        dateOfBirth: node.dateOfBirth || '',
+        isIndex: node.isIndex || false,
+        substanceAbuse: node.substanceAbuse || false,
+        mentalHealth: node.mentalHealth || false,
+        physicalIllness: node.physicalIllness || false,
+        partnerStatus: node.partnerStatus || 'married',
+      });
+    }
+  }, [node?.id]); // Use ID as dependency
 
   if (!node) return null;
 
@@ -636,9 +738,14 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto bg-black/80 backdrop-blur-md">
       <div className="bg-black/95 border-2 border-cyan-500 rounded-2xl p-8 max-w-2xl w-full shadow-[0_0_60px_rgba(34,211,238,0.5)] max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <h2 className="text-white font-black text-2xl uppercase tracking-tight text-center mb-6 border-b border-cyan-500/30 pb-4">
+        <h2 className="text-white font-black text-2xl uppercase tracking-tight text-center mb-1 border-b border-cyan-500/30 pb-4">
           Edit Person Details
         </h2>
+        {node.generation === 1 && (
+          <div className="text-cyan-400 text-center text-xs font-bold uppercase tracking-[0.2em] mb-6 animate-pulse">
+            Family Patriarch / Matriarch (Grandparent)
+          </div>
+        )}
 
         {/* A. IDENTITY SECTION */}
         <div className="mb-8">
@@ -698,6 +805,35 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
             />
           </div>
         </div>
+
+        {/* A.5 MARITAL STATUS (Only if partner exists) */}
+        {(node.partnerId || (node.partners && node.partners.length > 0)) && (
+          <div className="mb-8 p-4 bg-amber-900/10 rounded-xl border border-amber-500/20">
+            <h3 className="text-amber-400 font-bold text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+              <span className="text-xl">💍</span> Marital Status
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={() => setFormData({ ...formData, partnerStatus: 'married' })}
+                className={`${formData.partnerStatus === 'married' ? 'bg-amber-500/30 border-amber-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-3 flex flex-col items-center gap-1 transition-all hover:scale-105`}
+              >
+                <span className="text-white font-bold text-[10px] uppercase">Married</span>
+              </button>
+              <button
+                onClick={() => setFormData({ ...formData, partnerStatus: 'separated' })}
+                className={`${formData.partnerStatus === 'separated' ? 'bg-gray-500/30 border-gray-400' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-3 flex flex-col items-center gap-1 transition-all hover:scale-105`}
+              >
+                <span className="text-white font-bold text-[10px] uppercase">Separated</span>
+              </button>
+              <button
+                onClick={() => setFormData({ ...formData, partnerStatus: 'divorced' })}
+                className={`${formData.partnerStatus === 'divorced' ? 'bg-red-500/30 border-red-500' : 'bg-gray-800/50 border-gray-600'} border-2 rounded-xl p-3 flex flex-col items-center gap-1 transition-all hover:scale-105`}
+              >
+                <span className="text-white font-bold text-[10px] uppercase">Divorced</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* B. ROLE SECTION */}
         <div className="mb-8">
@@ -783,6 +919,8 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
           </p>
           <button
             onClick={() => {
+              // Auto-save before proceeding
+              onSave({ ...node, ...formData });
               if (onAddChild) onAddChild(node.id);
               onCancel(); // Close modal after action
             }}
@@ -792,6 +930,8 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
           </button>
           <button
             onClick={() => {
+              // Auto-save before proceeding
+              onSave({ ...node, ...formData });
               if (onAddPartner) onAddPartner(node.id);
               onCancel();
             }}
@@ -821,7 +961,97 @@ const EditNodeModal = ({ node, onSave, onCancel, onAddChild, onAddPartner }) => 
   );
 };
 
-// --- 8. MAIN COMPONENT ---
+// --- 9.5 ADD CHILD MODAL (Co-parent Selection) ---
+const AddChildModal = ({ isOpen, onClose, onConfirm, potentialParents }) => {
+  const [secondParentId, setSecondParentId] = React.useState('');
+  const [childType, setChildType] = React.useState('biological');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-auto bg-black/80 backdrop-blur-md">
+      <div className="bg-black/95 border-2 border-cyan-500 rounded-2xl p-8 max-w-md w-full shadow-[0_0_60px_rgba(34,211,238,0.5)]">
+        <h2 className="text-white font-black text-xl uppercase tracking-tight text-center mb-6 border-b border-cyan-500/30 pb-4">
+          Add New Child
+        </h2>
+
+        {/* Co-parent Selection */}
+        <div className="mb-6">
+          <label className="block text-gray-400 text-xs uppercase tracking-widest mb-3 font-bold">
+            Select Second Parent (Optional)
+          </label>
+          <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+            <button
+              onClick={() => setSecondParentId('')}
+              className={`w-full text-left p-3 rounded-lg border transition-all ${secondParentId === ''
+                ? 'bg-cyan-500/20 border-cyan-500 text-white'
+                : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-500'
+                }`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">👤</span>
+                <span className="font-bold">None / Single Parent</span>
+              </div>
+            </button>
+            {potentialParents?.map(parent => (
+              <button
+                key={parent.id}
+                onClick={() => setSecondParentId(parent.id)}
+                className={`w-full text-left p-3 rounded-lg border transition-all ${secondParentId === parent.id
+                  ? 'bg-purple-500/20 border-purple-500 text-white'
+                  : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-500'
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{parent.gender === 'female' ? '⚪' : '📦'}</span>
+                  <span className="font-bold">{parent.name || 'Unnamed Partner'}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Child Type Selection */}
+        <div className="mb-8">
+          <label className="block text-gray-400 text-xs uppercase tracking-widest mb-3 font-bold">
+            Relationship Type
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {['biological', 'adopted', 'foster'].map(type => (
+              <button
+                key={type}
+                onClick={() => setChildType(type)}
+                className={`p-2 rounded-lg border text-[10px] uppercase font-black tracking-tighter transition-all ${childType === type
+                  ? 'bg-cyan-500 text-black border-cyan-400'
+                  : 'bg-gray-800/50 border-gray-700 text-gray-500 hover:text-gray-300'
+                  }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => onConfirm({ secondParentId, childType })}
+            className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-lg uppercase tracking-wider transition-all"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-white border border-gray-600 font-bold py-3 rounded-lg uppercase tracking-wider transition-all"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- 10. MAIN COMPONENT ---
 const GenogramVis = ({
   familyData = corleoneFamily,
   onNodeClick,
@@ -845,64 +1075,56 @@ const GenogramVis = ({
   return (
     <div style={{ width: '100%', height: '100%', background: '#02040a' }}>
       <Canvas
-        camera={{ position: [0, 2, 12], fov: 40 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
-        onPointerDown={(e) => {
-          if (e.target.parentElement?.tagName === 'CANVAS' || e.intersections.length === 0) {
-            onNodeClick(null);
-          }
-        }}
+        camera={{ position: [0, 0, 15], fov: 50 }}
+        shadows
+        gl={{ antialias: true }}
       >
-        <color attach="background" args={["#02040a"]} />
-        <fog attach="fog" args={['#02040a', 15, 70]} />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} castShadow />
+        <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
+        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
-        <ambientLight intensity={0.2} />
-        <pointLight position={[5, 10, 10]} intensity={1.5} color="#ffffff" castShadow />
-        <spotLight position={[-10, 5, -5]} angle={0.5} penumbra={1} intensity={2} color="#00ffff" />
-        <pointLight position={[0, -5, 5]} intensity={0.5} color="#ffd700" />
+        {/* SCENE CONTENT */}
+        <group>
+          {/* BACKGROUND & ENVIRONMENT */}
+          <WireframeTerrain />
+          <HologramTree position={[0, -2, 0]} scale={[1.1, 1.1, 1.1]} />
 
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
-        <WireframeTerrain />
-        <HologramTree position={[0, -2, 0]} scale={[1.2, 1.2, 1.2]} />
-        <Sparkles count={40} scale={[8, 8, 8]} size={3} speed={0.2} color="#00ffff" opacity={0.5} />
+          {/* RELATIONSHIP LINES */}
+          <RelationshipArcs nodes={layoutNodes} relationships={relationships} />
 
-        {/* RENDER RELATIONSHIPS */}
-        <RelationshipArcs
-          nodes={layoutNodes}
-          relationships={relationships}
-        />
+          {/* FAMILY NODES */}
+          {layoutNodes.map((node) => (
+            <FamilyNode
+              key={node.id}
+              node={node}
+              fruitTexture={fruitTexture}
+              onClick={onNodeClick}
+              onHover={onNodeHover}
+            />
+          ))}
 
-        {layoutNodes.map((node) => (
-          <FamilyNode
-            key={node.id}
-            node={node}
-            fruitTexture={fruitTexture}
-            onClick={onNodeClick}
-            onHover={onNodeHover}
+          {/* CONTEXT MENU */}
+          {selectedNode && (
+            <ContextRing
+              node={selectedNode}
+              onLink={onLinkStart}
+              onEdit={onEditNode}
+              onStatusToggle={onStatusToggle}
+              onClose={() => onNodeClick(null)}
+              readOnly={readOnly}
+            />
+          )}
+
+          <OrbitControls
+            minDistance={5}
+            maxDistance={30}
+            enablePan={false}
+            maxPolarAngle={Math.PI / 2 - 0.05}
+            autoRotate={!selectedNode}
+            autoRotateSpeed={0.3}
           />
-        ))}
-
-        {/* CONTEXT MENU */}
-        {selectedNode && (
-          <ContextRing
-            node={selectedNode}
-            onLink={onLinkStart}
-            onEdit={onEditNode}
-            onStatusToggle={onStatusToggle}
-            onClose={() => onNodeClick(null)}
-            readOnly={readOnly}
-          />
-        )}
-
-        <OrbitControls
-          minDistance={5}
-          maxDistance={30}
-          enablePan={false}
-          maxPolarAngle={Math.PI / 2 - 0.05}
-          autoRotate={!selectedNode}
-          autoRotateSpeed={0.3}
-        />
+        </group>
       </Canvas>
     </div>
   );
@@ -910,4 +1132,4 @@ const GenogramVis = ({
 
 export default GenogramVis;
 
-export { RelationshipPicker, EditNodeModal };
+export { RelationshipPicker, EditNodeModal, AddChildModal };

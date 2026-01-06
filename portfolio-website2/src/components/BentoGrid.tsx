@@ -140,6 +140,7 @@ const BentoGrid = () => {
                             description="Streamlining open mic list management."
                             imageSrc="/bookedmic.png"
                             iosUrl="https://apps.apple.com/us/app/booked-mic/id6747945654"
+                            androidUrl=""
                         />
                     </GlowCard>
 
