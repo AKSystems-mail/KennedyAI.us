@@ -22,7 +22,7 @@ const HeroCard = () => {
 
     return (
         <div
-            className="h-full w-full bg-transparent relative overflow-hidden flex flex-col justify-center p-8 rounded-3xl"
+            className="h-full w-full bg-transparent relative overflow-hidden flex flex-col justify-center rounded-3xl"
         >
             {/* Animated Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 animate-gradient-xy opacity-90" />
@@ -36,7 +36,7 @@ const HeroCard = () => {
                 }}
             />
 
-            <div className="relative z-10 max-w-3xl">
+            <div className="relative z-10 max-w-3xl" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
                 <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

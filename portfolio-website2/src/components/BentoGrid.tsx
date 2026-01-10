@@ -68,7 +68,7 @@ const BentoGrid = () => {
 
     if (isSharedView) {
         return (
-            <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-0 sm:p-4">
+            <div className="min-h-screen bg-gradient-to-br from-[#23233d] to-[#050505] flex items-center justify-center p-0 sm:p-4">
                 <div className="w-full max-w-7xl h-screen sm:h-[800px] relative z-10 overflow-hidden rounded-none sm:rounded-3xl border-none sm:border border-white/10 shadow-2xl">
                     <Hero />
                 </div>
@@ -78,7 +78,7 @@ const BentoGrid = () => {
 
     return (
         <motion.div
-            className="min-h-screen bg-[#0a0a0c] text-white font-sans flex items-center justify-center p-4 sm:p-8 md:p-12 overflow-hidden relative"
+            className="min-h-screen bg-gradient-to-br from-[#23233d] to-[#050505] text-white font-sans flex items-center justify-center p-4 sm:p-8 md:p-12 overflow-hidden relative"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
@@ -93,7 +93,7 @@ const BentoGrid = () => {
                    md:grid-cols-[1.2fr_1.2fr_0.8fr]
                    This makes the first two columns wider and the last column (Roadmap/Spotify) narrower.
                 */}
-                <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1.2fr_0.8fr] auto-rows-[minmax(180px,auto)] gap-6 relative">
+                <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1.2fr_0.8fr] auto-rows-[minmax(100px,auto)] gap-6 relative">
 
                     {/* HERO */}
                     <GlowCard

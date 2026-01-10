@@ -30,14 +30,14 @@ const AppCard = ({ title, description, imageSrc, iosUrl, androidUrl }) => {
         {/* Top Spacer */}
         <div className="flex justify-end"></div>
         {/* Bottom Section: Text & Buttons - ADD px-4 HERE */}
-        <div className="flex flex-col items-center text-center gap-3 mt-auto px-4 pb-4">
+        <div className="flex flex-col items-start gap-3 mt-auto pb-4" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
           <h3 className="text-2xl font-bold text-white leading-tight drop-shadow-md">
             {title}
           </h3>
           <p className="text-gray-300 text-sm mb-4 line-clamp-2 drop-shadow-sm font-medium">
             {description}
           </p>
-          <div className="flex flex-wrap justify-center gap-6 mt-2">
+          <div className="w-full flex flex-wrap justify-center gap-6 mt-2">
             {iosUrl && (
               <a
                 href={iosUrl}
