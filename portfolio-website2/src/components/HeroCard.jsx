@@ -44,7 +44,7 @@ const HeroCard = () => {
                     className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight"
                 >
                     KennedyAI - Building apps that turn <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 drop-shadow-lg">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-400 drop-shadow-lg">
                         friction into flow.
                     </span>
                 </motion.h1>
@@ -57,7 +57,7 @@ const HeroCard = () => {
                 >
                     <span className="font-medium text-white">Android & iOS Developer</span>
                     <span className="text-gray-600 hidden md:inline">|</span>
-                    <span className="font-mono text-purple-400 min-w-[200px]">
+                    <span className="font-mono text-yellow-400 min-w-[200px]">
                         <Typewriter text={roles[roleIndex]} />
                     </span>
                 </motion.div>
@@ -67,10 +67,10 @@ const HeroCard = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.8, duration: 0.5 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, color: '#facc15' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={scrollToWork}
-                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
+                        className="group text-white font-bold text-lg hover:text-yellow-400 transition-all flex items-center gap-2 cursor-pointer"
                     >
                         View My Work
                         <svg className="w-5 h-5 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,9 +83,9 @@ const HeroCard = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.9, duration: 0.5 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, color: '#facc15' }}
                         whileTap={{ scale: 0.95 }}
-                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
+                        className="group text-white font-bold text-lg hover:text-yellow-400 transition-all flex items-center gap-2 cursor-pointer"
                     >
                         <FiMail className="w-5 h-5" />
                         Contact Me
@@ -97,12 +97,12 @@ const HeroCard = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.0, duration: 0.5 }}
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05, color: '#facc15' }}
                         whileTap={{ scale: 0.95 }}
-                        className="group text-white font-bold text-lg hover:text-white/80 transition-all flex items-center gap-2 cursor-pointer"
+                        className="group text-white font-bold text-lg hover:text-yellow-400 transition-all flex items-center gap-2 cursor-pointer"
                         title="Download Resume"
                     >
-                        <FiDownload className="w-5 h-5 group-hover:text-purple-400 transition-colors" />
+                        <FiDownload className="w-5 h-5 group-hover:text-yellow-400 transition-colors" />
                         <span>CV</span>
                     </motion.a>
                 </div>

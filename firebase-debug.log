@@ -40,3 +40,71 @@
 [debug] [2025-12-12T21:59:01.627Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
 [debug] [2025-12-12T21:59:01.631Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
 [debug] [2025-12-12T21:59:01.632Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:25.804Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:25.809Z] > authorizing via signed-in user (aksystems.mail@gmail.com)
+[debug] [2026-02-05T03:27:25.810Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.810Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.810Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:25.811Z] > authorizing via signed-in user (aksystems.mail@gmail.com)
+[debug] [2026-02-05T03:27:25.811Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.811Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.813Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo [none]
+[debug] [2026-02-05T03:27:25.815Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo [none]
+[debug] [2026-02-05T03:27:25.957Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo 200
+[debug] [2026-02-05T03:27:25.957Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo {"name":"projects/joke-book-d1510/billingInfo","projectId":"joke-book-d1510","billingAccountName":"billingAccounts/01D3CE-7950F5-66CF34","billingEnabled":true}
+[debug] [2026-02-05T03:27:25.964Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.964Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.980Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.980Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.981Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.981Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:25.981Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-05T03:27:25.981Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:25.983Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-05T03:27:25.983Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:25.984Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com [none]
+[debug] [2026-02-05T03:27:25.985Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:26.025Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo 200
+[debug] [2026-02-05T03:27:26.025Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo {"name":"projects/joke-book-d1510/billingInfo","projectId":"joke-book-d1510","billingAccountName":"billingAccounts/01D3CE-7950F5-66CF34","billingEnabled":true}
+[debug] [2026-02-05T03:27:26.026Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.026Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.033Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.033Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.033Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.033Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.033Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-05T03:27:26.034Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:26.036Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-05T03:27:26.036Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:26.038Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com [none]
+[debug] [2026-02-05T03:27:26.038Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com  x-goog-user-project=joke-book-d1510
+[debug] [2026-02-05T03:27:26.204Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com 403
+[debug] [2026-02-05T03:27:26.204Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com [omitted]
+[debug] [2026-02-05T03:27:26.264Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com 403
+[debug] [2026-02-05T03:27:26.264Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseio.com [omitted]
+[debug] [2026-02-05T03:27:26.624Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-05T03:27:26.624Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-05T03:27:26.626Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-05T03:27:26.626Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-05T03:27:26.630Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-05T03:27:26.630Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-05T03:27:26.631Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-05T03:27:26.631Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/joke-book-d1510/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-05T03:27:26.656Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:26.656Z] > authorizing via signed-in user (aksystems.mail@gmail.com)
+[debug] [2026-02-05T03:27:26.656Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.657Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.657Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo [none]
+[debug] [2026-02-05T03:27:26.814Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo 200
+[debug] [2026-02-05T03:27:26.814Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo {"name":"projects/joke-book-d1510/billingInfo","projectId":"joke-book-d1510","billingAccountName":"billingAccounts/01D3CE-7950F5-66CF34","billingEnabled":true}
+[debug] [2026-02-05T03:27:26.817Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:26.817Z] > authorizing via signed-in user (aksystems.mail@gmail.com)
+[debug] [2026-02-05T03:27:26.842Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:26.843Z] > authorizing via signed-in user (aksystems.mail@gmail.com)
+[debug] [2026-02-05T03:27:26.843Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.843Z] Checked if tokens are valid: true, expires at: 1770265279569
+[debug] [2026-02-05T03:27:26.843Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo [none]
+[debug] [2026-02-05T03:27:27.199Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo 200
+[debug] [2026-02-05T03:27:27.200Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/joke-book-d1510/billingInfo {"name":"projects/joke-book-d1510/billingInfo","projectId":"joke-book-d1510","billingAccountName":"billingAccounts/01D3CE-7950F5-66CF34","billingEnabled":true}
+[debug] [2026-02-05T03:27:27.202Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T03:27:27.202Z] > authorizing via signed-in user (aksystems.mail@gmail.com)

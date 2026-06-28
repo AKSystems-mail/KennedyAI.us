@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import BentoGrid from './components/BentoGrid'; // Your main portfolio
+import StudioLayout from './components/StudioLayout'; // Your new spatial layout
 import GenogramPage from './genogram/GenogramPage'; // Your new isolated project
 import JokeBookPage from './components/JokeBookPage';
 import JokeBookPrivacy from './components/JokeBookPrivacy';
@@ -8,7 +8,7 @@ function App() {
   return (
     <Routes>
       {/* The Main Portfolio (Home) */}
-      <Route path="/" element={<BentoGrid />} />
+      <Route path="/" element={<StudioLayout />} />
 
       {/* The Secret Sandbox (Genogram) */}
       <Route path="/3Dgenogram" element={<GenogramPage />} />
