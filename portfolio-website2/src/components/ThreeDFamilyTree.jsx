@@ -223,36 +223,37 @@ const calculateLayout = (root, depth = 0, angleRange = { start: 0, end: Math.PI 
     depth
   });
 
-  if (root.children && root.children.length > 0) {
-    const children = root.children;
-    const count = children.length;
-    const totalAngle = angleRange.end - angleRange.start;
-    const step = totalAngle / count;
+    if (root.children && root.children.length > 0) {
+      const children = root.children;
+      const count = children.length;
+      const totalAngle = angleRange.end - angleRange.start;
+      const step = totalAngle / count;
 
-    children.forEach((child, i) => {
-      let childStart = angleRange.start + (i * step);
-      let childEnd = childStart + step;
-      let cColor = myColor;
-      if (depth === 0) {
-        cColor = colors[i % colors.length];
-      }
+      children.forEach((child, i) => {
+        let childStart = angleRange.start + (i * step);
+        let childEnd = childStart + step;
+        let cColor = myColor;
+        if (depth === 0) {
+          cColor = colors[i % colors.length];
+        }
 
-      const childNodes = calculateLayout(
-        child,
-        depth + 1,
-        { start: childStart, end: childEnd },
-        { x, y: currentConfig.y, z },
-        cColor
-      );
-      nodes = nodes.concat(childNodes);
-    });
-  }
+        const childNodes = calculateLayout(
+          child,
+          depth + 1,
+          { start: childStart, end: childEnd },
+          { x, y: currentConfig.y, z },
+          cColor
+        );
+        nodes = nodes.concat(childNodes);
+      });
+    }
+
 
   return nodes;
 };
 
 // --- 6. MAIN COMPONENT ---
-const ThreeDFamilyTree = ({ familyData = corleoneFamily, onNodeClick, onNodeHover }) => {
+const ThreeDFamilyTree = ({ familyData = corleoneFamily, onNodeClick, onNodeHover, controlsEnabled = true }) => {
   const layoutNodes = useMemo(() => calculateLayout(familyData), [familyData]);
   const fruitTexture = useFruitTexture();
 
@@ -305,6 +306,7 @@ const ThreeDFamilyTree = ({ familyData = corleoneFamily, onNodeClick, onNodeHove
 
         {/* CONTROLS */}
         <OrbitControls
+          enabled={controlsEnabled}
           minDistance={5}
           maxDistance={30}
           enablePan={false}

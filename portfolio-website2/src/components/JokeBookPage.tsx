@@ -4,7 +4,7 @@ import { FaPenFancy, FaMicrophoneAlt, FaLayerGroup, FaEnvelope, FaShieldAlt } fr
 
 const JokeBookPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-yellow-400 selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-yellow-400 selection:text-black overflow-x-clip">
       
       {/* Background Ambient Glow */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-30">

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const JokeBookPrivacy: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-yellow-400 selection:text-black overflow-x-hidden p-8 md:p-16 relative">
+    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-yellow-400 selection:text-black overflow-x-clip p-8 md:p-16 relative">
       
       {/* Background Ambient Glow */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
