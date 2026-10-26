@@ -1,0 +1,35 @@
+TOTAL 4392 canvas 1 imgs 3 font "Bricolage Grotesque", sans-serif
+H1 ["Akil Bjorn"]
+H2 ["PRODUCTS I'VE BUILT","IN PROGRESS","Family Tree Visualizer"]
+IMG arcwriter.png 803x593 box 224
+IMG jokebook.png 512x512 box 224
+IMG bookedmic.png 512x512 box 224
+SEC 0 h4388 op1 DIV root | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 0 h4388 op1 DIV  | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 0 h900 op1 SECTION  | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 0 h900 op0.4 DIV  | 
+SEC 307 h286 op1 DIV  | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 307 h286 op1 DIV  | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 307 h286 op1 DIV  | KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi
+SEC 954 h1762 op1 SECTION work-section | PRODUCTS I'VE BUILT SHIPPED ARCWRITER AI-powered screenplay and script developme
+SEC 1148 h518 op0 DIV  | SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu
+SEC 1149 h420 op1 DIV  | SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu
+SEC 1149 h420 op1 DIV  | SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu
+SEC 1698 h518 op0 DIV  | SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed
+SEC 1699 h420 op1 DIV  | SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed
+SEC 1699 h420 op1 DIV  | SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed
+SEC 2248 h518 op0 DIV  | SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro
+SEC 2249 h420 op1 DIV  | SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro
+SEC 2249 h420 op1 DIV  | SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro
+SEC 2748 h624 op1 DIV  | IN PROGRESS WHAT I'M BUILDING NEXT. IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRAC
+SEC 2828 h464 op1 DIV  | IN PROGRESS WHAT I'M BUILDING NEXT. IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRAC
+SEC 2932 h360 op1 DIV  | IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRACKING. FINDS ROLES THAT FIT YOUR RESU
+SEC 3392 h770 op0 SECTION tree-sanctuary | Family Tree Visualizer INTERACTIVE HOLOGRAM ▼ SELECT A FAMILY MEMBER TO START. L
+SEC 3392 h770 op1 DIV  | Family Tree Visualizer INTERACTIVE HOLOGRAM ▼ SELECT A FAMILY MEMBER TO START. L
+SEC 3392 h770 op1 DIV  | 
+SEC 3392 h770 op1 DIV  | 
+SEC 3392 h770 op1 DIV  | 
+shot wheel 0
+shot wheel 1
+shot wheel 2
+shot wheel 3 FAILED CDP timeout: Page.captureScreenshot

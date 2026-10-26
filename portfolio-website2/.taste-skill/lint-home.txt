@@ -1,0 +1,56 @@
+TASTESKILL · LINT   7 file(s)
+
+FAIL
+  [micro-label] Tiny uppercase letter-spaced label.  (4×)
+      src/components/StudioLayout.tsx:49  group inline-flex items-center gap-3 border border-white/20 hover:bord
+      src/components/StudioLayout.tsx:134  text-[10px] md:text-xs font-mono uppercase tracking-widest text-gray-4
+      src/components/StudioLayout.tsx:135  text-[10px] md:text-xs font-mono uppercase tracking-widest text-gray-4
+      src/components/RoadmapCard.jsx:78  text-xs font-medium text-gray-500 uppercase tracking-wider px-4
+  [gradient] Gradient fill. Use a flat colour or a real image (a neutral scrim over a photo is the one exception).  (6×)
+      src/components/StudioLayout.tsx:109  bg-gradient-
+      src/components/HeroCard.jsx:17  bg-gradient-
+      src/components/AppCard.jsx:22  bg-gradient-
+      src/components/AppCard.jsx:26  bg-gradient-
+      src/components/RoadmapCard.jsx:131  bg-gradient-
+      src/components/TechStack.jsx:51  linear-gradient(
+  [mono] Monospace type. Only literal code may be monospace.  (7×)
+      src/components/StudioLayout.tsx:121  font-mono
+      src/components/StudioLayout.tsx:134  font-mono
+      src/components/StudioLayout.tsx:135  font-mono
+      src/components/HeroCard.jsx:24  font-mono
+      src/components/AppSlab.tsx:34  font-mono
+      src/components/RoadmapCard.jsx:109  font-mono
+      … 1 more
+  [hairline] Thin rule / divider line. Separate with space, tone or scale; lines belong to real tables and form fields.  (5×)
+      src/components/StudioLayout.tsx:126  border-t
+      src/components/StudioLayout.tsx:129  border-t
+      src/components/AppSlab.tsx:55  border-t
+      src/components/AppSlab.tsx:62  border-r
+      src/components/AppSlab.tsx:86  border-r
+  [shadow] Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may.  (4×)
+      src/components/AppCard.jsx:34  drop-shadow-
+      src/components/AppCard.jsx:37  drop-shadow-
+      src/components/AppSlab.tsx:22  shadow-2xl
+      src/components/TechStack.jsx:89  drop-shadow(
+
+WARN
+  [h-screen] 100vh jumps on mobile. Use 100svh / 100dvh.  (3×)
+      src/components/StudioLayout.tsx:25  h-screen
+      src/components/StudioLayout.tsx:32  h-screen
+      src/components/StudioLayout.tsx:35  h-screen
+  [outlined-box] A 1px outlined box. Prefer a filled surface or no box.  (2×)
+      src/components/StudioLayout.tsx:49  border
+      src/components/AppSlab.tsx:22  border
+  [transition-all] transition: all. Name the properties (transform, opacity).  (9×)
+      src/components/StudioLayout.tsx:49  transition-all
+      src/components/HeroCard.jsx:63  transition-all
+      src/components/AppCard.jsx:46  transition-all
+      src/components/AppCard.jsx:57  transition-all
+      src/components/AppSlab.tsx:62  transition-all
+      src/components/AppSlab.tsx:74  transition-all
+      … 3 more
+  [default-font] A default typeface. Use the faces named by the drawn direction.  (1×)
+      index.html:11  family=Inter
+
+RESULT: 26 FAIL, 15 WARN — fix the FAILs before rendering.
+Interface fragments marked data-ui keep their own borders and shadows. Any other line that must keep a flagged pattern for a real reason can carry the comment taste-skill-ignore.

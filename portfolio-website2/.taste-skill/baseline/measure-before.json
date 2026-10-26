@@ -1,0 +1,164 @@
+{
+ "desk": {
+  "scrollWidth": 1440,
+  "clientWidth": 1440,
+  "pageH": 4392,
+  "h1": {
+   "text": "Akil Bjorn",
+   "size": "72px",
+   "lines": 1,
+   "font": "\"Bricolage Grotesque\"",
+   "color": "rgb(255, 255, 255)",
+   "x": 96
+  },
+  "h2": [
+   {
+    "t": "PRODUCTS I'VE BUILT",
+    "size": "96px"
+   },
+   {
+    "t": "IN PROGRESS",
+    "size": "72px"
+   },
+   {
+    "t": "Family Tree Visualizer",
+    "size": "14px"
+   }
+  ],
+  "topEdges": [
+   [
+    "41",
+    9
+   ],
+   [
+    "83",
+    5
+   ],
+   [
+    "96",
+    4
+   ],
+   [
+    "549",
+    4
+   ],
+   [
+    "1015",
+    4
+   ],
+   [
+    "16",
+    3
+   ]
+  ],
+  "fonts": {
+   "Space Mono": 20,
+   "Bricolage Grotesque": 40
+  },
+  "sizes": {
+   "14px": 21,
+   "72px": 3,
+   "24px": 1,
+   "18px": 5,
+   "96px": 2,
+   "12px": 9,
+   "48px": 3,
+   "20px": 3,
+   "9px": 3,
+   "30px": 3,
+   "10px": 6,
+   "36px": 1
+  },
+  "gradientEls": 2,
+  "shadowEls": 6,
+  "monoEls": 20,
+  "backdropBlurEls": 4,
+  "greyRunningText": 13,
+  "images": 3,
+  "canvases": 1,
+  "navLinks": 0,
+  "linkCount": 8,
+  "bodyBg": "rgb(3, 3, 5)",
+  "minLeft": -11.536903381347656,
+  "maxRight": 1631.603759765625
+ },
+ "phone": {
+  "scrollWidth": 390,
+  "clientWidth": 390,
+  "pageH": 2756,
+  "h1": {
+   "text": "Akil Bjorn",
+   "size": "36px",
+   "lines": 1,
+   "font": "\"Bricolage Grotesque\"",
+   "color": "rgb(255, 255, 255)",
+   "x": 16
+  },
+  "h2": [
+   {
+    "t": "PRODUCTS I'VE BUILT",
+    "size": "36px"
+   },
+   {
+    "t": "IN PROGRESS",
+    "size": "30px"
+   },
+   {
+    "t": "Family Tree Visualizer",
+    "size": "14px"
+   }
+  ],
+  "topEdges": [
+   [
+    "41",
+    9
+   ],
+   [
+    "16",
+    7
+   ],
+   [
+    "72",
+    4
+   ],
+   [
+    "368",
+    4
+   ],
+   [
+    "664",
+    4
+   ],
+   [
+    "17",
+    3
+   ]
+  ],
+  "fonts": {
+   "Space Mono": 22,
+   "Bricolage Grotesque": 39
+  },
+  "sizes": {
+   "12px": 6,
+   "36px": 3,
+   "20px": 4,
+   "16px": 4,
+   "10px": 17,
+   "30px": 6,
+   "14px": 18,
+   "9px": 3
+  },
+  "gradientEls": 2,
+  "shadowEls": 6,
+  "monoEls": 22,
+  "backdropBlurEls": 5,
+  "greyRunningText": 14,
+  "images": 3,
+  "canvases": 1,
+  "navLinks": 0,
+  "linkCount": 8,
+  "bodyBg": "rgb(3, 3, 5)",
+  "minLeft": -11.364089965820312,
+  "maxRight": 1631.7764892578125
+ }
+}

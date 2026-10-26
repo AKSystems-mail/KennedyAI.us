@@ -1,0 +1,261 @@
+{
+ "total": 4392,
+ "secs": [
+  {
+   "tag": "DIV",
+   "id": "root",
+   "cls": "",
+   "top": 0,
+   "h": 4388,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "min-h-screen bg-brand-black text-white selection:bg-brand-ac",
+   "top": 0,
+   "h": 4388,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "SECTION",
+   "id": "",
+   "cls": "w-full relative flex items-start md:items-center justify-cen",
+   "top": 0,
+   "h": 900,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "absolute inset-0 z-0 opacity-40",
+   "top": 0,
+   "h": 900,
+   "text": "",
+   "opacity": "0.4"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "w-full max-w-7xl z-10",
+   "top": 307,
+   "h": 286,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "h-full w-full bg-transparent relative overflow-hidden flex f",
+   "top": 307,
+   "h": 286,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "relative z-10 p-4 md:p-8 max-w-3xl",
+   "top": 307,
+   "h": 286,
+   "text": "KENNEDYAI Akil Bjorn Android & iOS Developer Atlanta-based solo developer buildi",
+   "opacity": "1"
+  },
+  {
+   "tag": "SECTION",
+   "id": "work-section",
+   "cls": "py-16 md:py-40 px-4 md:px-8",
+   "top": 954,
+   "h": 1762,
+   "text": "PRODUCTS I'VE BUILT SHIPPED ARCWRITER AI-powered screenplay and script developme",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "w-full max-w-6xl mx-auto mb-8 md:mb-24 bg-brand-surface bord",
+   "top": 1148,
+   "h": 518,
+   "text": "SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu",
+   "opacity": "0"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "relative z-10 flex flex-col md:flex-row h-full md:h-[420px] ",
+   "top": 1149,
+   "h": 420,
+   "text": "SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "flex-1 p-6 md:p-16 flex flex-col justify-center",
+   "top": 1149,
+   "h": 420,
+   "text": "SHIPPED ARCWRITER AI-powered screenplay and script development platform. Structu",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "w-full max-w-6xl mx-auto mb-8 md:mb-24 bg-brand-surface bord",
+   "top": 1698,
+   "h": 518,
+   "text": "SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed",
+   "opacity": "0"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "relative z-10 flex flex-col md:flex-row h-full md:h-[420px] ",
+   "top": 1699,
+   "h": 420,
+   "text": "SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "flex-1 p-6 md:p-16 flex flex-col justify-center",
+   "top": 1699,
+   "h": 420,
+   "text": "SHIPPED JOKEBOOK GO Your jokes, set lists, and recordings in one place. Designed",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "w-full max-w-6xl mx-auto mb-8 md:mb-24 bg-brand-surface bord",
+   "top": 2248,
+   "h": 518,
+   "text": "SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro",
+   "opacity": "0"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "relative z-10 flex flex-col md:flex-row h-full md:h-[420px] ",
+   "top": 2249,
+   "h": 420,
+   "text": "SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "flex-1 p-6 md:p-16 flex flex-col justify-center",
+   "top": 2249,
+   "h": 420,
+   "text": "SHIPPED BOOKED MIC Streamlining open mic list management. Real-time performer ro",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "w-full bg-[#081b33] py-20 md:py-40 relative overflow-hidden",
+   "top": 2748,
+   "h": 624,
+   "text": "IN PROGRESS WHAT I'M BUILDING NEXT. IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRAC",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "max-w-7xl mx-auto px-4 md:px-8 relative z-10",
+   "top": 2828,
+   "h": 464,
+   "text": "IN PROGRESS WHAT I'M BUILDING NEXT. IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRAC",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "flex gap-4 md:gap-8 overflow-x-auto pb-8 md:pb-12 custom-scr",
+   "top": 2932,
+   "h": 360,
+   "text": "IN PROGRESS SCOUTBOARD JOB SEARCH MATCH TRACKING. FINDS ROLES THAT FIT YOUR RESU",
+   "opacity": "1"
+  },
+  {
+   "tag": "SECTION",
+   "id": "tree-sanctuary",
+   "cls": "h-[80vh] md:h-[90vh] w-full relative bg-black group",
+   "top": 3392,
+   "h": 770,
+   "text": "Family Tree Visualizer INTERACTIVE HOLOGRAM ▼ SELECT A FAMILY MEMBER TO START. L",
+   "opacity": "0"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "relative w-full h-full bg-black overflow-hidden group/hero",
+   "top": 3392,
+   "h": 770,
+   "text": "Family Tree Visualizer INTERACTIVE HOLOGRAM ▼ SELECT A FAMILY MEMBER TO START. L",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "absolute inset-0 z-0",
+   "top": 3392,
+   "h": 770,
+   "text": "",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "",
+   "top": 3392,
+   "h": 770,
+   "text": "",
+   "opacity": "1"
+  },
+  {
+   "tag": "DIV",
+   "id": "",
+   "cls": "",
+   "top": 3392,
+   "h": 770,
+   "text": "",
+   "opacity": "1"
+  }
+ ],
+ "imgs": [
+  {
+   "src": "arcwriter.png",
+   "w": 803,
+   "h": 593,
+   "box": 224
+  },
+  {
+   "src": "jokebook.png",
+   "w": 512,
+   "h": 512,
+   "box": 224
+  },
+  {
+   "src": "bookedmic.png",
+   "w": 512,
+   "h": 512,
+   "box": 224
+  }
+ ],
+ "canvases": 1,
+ "h1": [
+  "Akil Bjorn"
+ ],
+ "h2": [
+  "PRODUCTS I'VE BUILT",
+  "IN PROGRESS",
+  "Family Tree Visualizer"
+ ],
+ "bodyBg": "rgb(3, 3, 5)",
+ "font": "\"Bricolage Grotesque\", sans-serif"
+}

@@ -32,11 +32,7 @@ const StudioLayout = () => {
         <div className="min-h-screen bg-brand-black text-white selection:bg-brand-accent selection:text-brand-black overflow-x-clip">
             
             {/* 1. HERO SECTION */}
-            <section className="w-full relative flex items-start md:items-center justify-center overflow-hidden pt-24 md:pt-0 md:h-screen mb-8 md:mb-0">
-                <div className="absolute inset-0 z-0 opacity-40">
-                   <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/20 blur-[120px] rounded-full" />
-                   <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-accent/10 blur-[120px] rounded-full" />
-                </div>
+            <section className="w-full relative flex items-center justify-center overflow-hidden pt-24 md:pt-0 md:min-h-screen px-4 md:px-8">
                 <div className="w-full max-w-7xl z-10">
                     <HeroCard />
                 </div>

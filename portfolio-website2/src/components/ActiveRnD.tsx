@@ -59,16 +59,16 @@ const ActiveRnD = () => {
         </div>
 
         {/* Cards */}
-        <div className="flex gap-4 md:gap-8 overflow-x-auto pb-8 md:pb-12 custom-scrollbar snap-x">
+        <div className="grid gap-4 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => {
             const config = statusConfig[project.status];
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.15 }}
-                className="min-w-[280px] sm:min-w-[350px] md:min-w-[450px] bg-black/40 backdrop-blur-xl border border-white/10 p-4 md:p-5 flex flex-col justify-between h-[260px] md:h-[360px] snap-center group hover:border-brand-accent/50 transition-colors"
+                className="w-full bg-black/40 border border-white/10 p-4 md:p-5 flex flex-col justify-between h-[260px] md:h-[360px] group hover:border-brand-accent/50 transition-colors"
               >
                 <div>
                   {/* Top row: Status badge */}

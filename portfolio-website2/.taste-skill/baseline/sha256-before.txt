@@ -1,0 +1,2 @@
+cc1a3d7594d04df320e1a11ae884e81748cf1af2522f71042d7275fa9c79f7d7  src/components/HeroCard.jsx
+6aca048d469d924fe146e23fd994292d935f5aa7dfbbab995ba7f83a96b75f0c  src/components/ActiveRnD.tsx
